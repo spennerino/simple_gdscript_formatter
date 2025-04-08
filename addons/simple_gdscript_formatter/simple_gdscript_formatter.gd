@@ -1,7 +1,7 @@
 @tool
 extends EditorPlugin
 
-var FORMAT_ACTION := "gdscript_formatter/format_code"
+var FORMAT_ACTION := "simple_gdscript_formatter/format_code"
 var format_key: InputEventKey
 
 
