@@ -106,8 +106,8 @@ static func _format_operators_and_commas(code: String) -> String:
 	code = define_regex.sub(code, ":=", true)
 
 	# a ( => a(
-	var pand_left_regex = RegEx.create_from_string(r"(?<=[\w\)]) *([\(:,])(?!=)")
-	code = pand_left_regex.sub(code, "$1", true)
+	var trim_left_regex = RegEx.create_from_string(r"(?<=[\w\)\]]) *([\(:,])(?!=)")
+	code = trim_left_regex.sub(code, "$1", true)
 
 	var trim_inside_left_regex = RegEx.create_from_string(r"([\(]) *")
 	code = trim_inside_left_regex.sub(code, "$1", true)

@@ -12,8 +12,10 @@ func func_a(param1: int, param2: float = 1.0):
 	var b = 5
 	var result = 0
 
-	a = (a + b) / (b - a)
-	a = (a + b) / (b - a)
+	var c = [1,2,3]
+	if c[0] != c[3]:
+		a = (a + b) / (b - a)
+		a = (a + b) / (b - a)
 
 	# Arithmetic operations
 	result = a + b
