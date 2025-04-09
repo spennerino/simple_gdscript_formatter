@@ -21,7 +21,6 @@ static func _blank_for_func_class( code: String) -> String:
 			if modified_lines.size() > 0:
 				var i := modified_lines.size() - 1
 				while(comment_line_regex.search( modified_lines[i])):
-					print(modified_lines[i])
 					i -= 1
 				modified_lines.insert(i + 1,"")
 				modified_lines.insert(i + 1,"")
