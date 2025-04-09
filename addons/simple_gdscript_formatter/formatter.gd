@@ -1,9 +1,10 @@
 class_name Formatter
 
-const RuleBlankLines = preload("./rules/blank_lines.gd")
 const RuleSpacing = preload("./rules/spacing.gd")
+const RuleBlankLines = preload("./rules/blank_lines.gd")
+
 
 func format_code(code: String) -> String:
-	code = RuleBlankLines.apply(code)
 	code = RuleSpacing.apply(code)
+	code = RuleBlankLines.apply(code)
 	return code

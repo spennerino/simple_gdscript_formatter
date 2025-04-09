@@ -1,5 +1,43 @@
-
 class_name RuleSpacing
+
+const SYMBOLS = [
+	r"\*\*=",
+	r"\*\*",
+	"<<=",
+	">>=",
+	"<<",
+	">>",
+	"==",
+	"!=",
+	">=",
+	"<=",
+	"&&",
+	r"\|\|",
+	r"\+=",
+	"-=",
+	r"\*=",
+	"/=",
+	"%=",
+	"&=",
+	r"\^=",
+	r"\|=",
+	"~=",
+	":=",
+	"->",
+	r"&",
+	r"\|",
+	r"\^",
+	"-",
+	r"\+",
+	"/",
+	r"\*",
+	">",
+	"<",
+	"-",
+	"%",
+	"=",
+	":"
+];
 
 
 static func apply(code: String) -> String:
@@ -44,24 +82,23 @@ static func apply(code: String) -> String:
 
 	for placeholder in ref_map:
 		code = code.replace(placeholder, ref_map[placeholder])
-
 	for placeholder in comment_map:
 		code = code.replace(placeholder, comment_map[placeholder])
 
 	for placeholder in string_map:
 		code = code.replace(placeholder, string_map[placeholder])
-
 	return code
 
 
 static func _format_operators_and_commas(code: String) -> String:
-	var indent_regex = RegEx.create_from_string(r"^ {4}")
+	var indent_regex = RegEx.create_from_string(r"^\s{4}")
 	var new_code = indent_regex.sub(code, "\t", true)
 	while(code != new_code):
 		code = new_code
 		new_code = indent_regex.sub(code, "\t", true)
 
-	var operator_regex = RegEx.create_from_string(r" *?((->)|([-+*/=!<>:]=)|[-=:<>+*%,]) *")
+	var symbols_regex = "(" + ")|(".join(SYMBOLS) + ")"
+	var operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
 	code = operator_regex.sub(code, " $1 ", true)
 
 	var define_regex = RegEx.create_from_string(r": *=")
@@ -69,6 +106,12 @@ static func _format_operators_and_commas(code: String) -> String:
 
 	var pand_left_regex = RegEx.create_from_string(r"(?<!=) *([\(:,])(?!=)")
 	code = pand_left_regex.sub(code, "$1", true)
+
+	var trim_inside_left_regex = RegEx.create_from_string(r"([\(]) ")
+	code = trim_inside_left_regex.sub(code, "$1", true)
+
+	var trim_inside_right_regex = RegEx.create_from_string(r" ([\)])")
+	code = trim_inside_right_regex.sub(code, "$1", true)
 
 	var trim_regex = RegEx.new()
 	trim_regex.compile("[ \t]*\n")
