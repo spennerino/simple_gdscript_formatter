@@ -7,7 +7,7 @@ class class_a:
 
 # All symbols in comment for testing purposes
 # ** << >> == != >= <= && || += -= *= /= %= **= &= ^= |= ~= <<= >>= := -> & | ^ - + / * > < - %
-func func_a(param1: int, param2: float = 1.0) :
+func func_a(param1: int, param2: float = 1.0):
 	var a = 10
 	var b = 5
 	var result = 0

@@ -47,7 +47,7 @@ static func apply(code: String) -> String:
 	var string_matches = string_regex.search_all(code)
 	var string_map = { }
 
-	for i in range(string_matches.size()) :
+	for i in range(string_matches.size()):
 		var match = string_matches[i]
 		var original = match.get_string()
 		var placeholder = "__STRING__%d__" % i
@@ -59,7 +59,7 @@ static func apply(code: String) -> String:
 	var comment_matches = comment_regex.search_all(code)
 	var comment_map = { }
 
-	for i in range(comment_matches.size()) :
+	for i in range(comment_matches.size()):
 		var match = comment_matches[i]
 		var original = match.get_string()
 		var placeholder = "__COMMENT__%d__" % i
@@ -71,7 +71,7 @@ static func apply(code: String) -> String:
 	var ref_matches = ref_regex.search_all(code)
 	var ref_map = { }
 
-	for i in range(ref_matches.size()) :
+	for i in range(ref_matches.size()):
 		var match = ref_matches[i]
 		var original = match.get_string()
 		var placeholder = "__REF__%d__" % i
@@ -93,7 +93,7 @@ static func apply(code: String) -> String:
 static func _format_operators_and_commas(code: String) -> String:
 	var indent_regex = RegEx.create_from_string(r"^\s{4}")
 	var new_code = indent_regex.sub(code, "\t", true)
-	while(code != new_code) :
+	while(code != new_code):
 		code = new_code
 		new_code = indent_regex.sub(code, "\t", true)
 
@@ -101,10 +101,12 @@ static func _format_operators_and_commas(code: String) -> String:
 	var operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
 	code = operator_regex.sub(code, " $1 ", true)
 
+	# : =  => :=
 	var define_regex = RegEx.create_from_string(r": *=")
 	code = define_regex.sub(code, ":=", true)
 
-	var pand_left_regex = RegEx.create_from_string(r"(?<!\W) *([\(:,])(?!=)")
+	# a ( => a(
+	var pand_left_regex = RegEx.create_from_string(r"(?<=[\w\)]) *([\(:,])(?!=)")
 	code = pand_left_regex.sub(code, "$1", true)
 
 	var trim_inside_left_regex = RegEx.create_from_string(r"([\(]) *")
