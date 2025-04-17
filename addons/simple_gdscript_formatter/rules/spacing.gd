@@ -39,6 +39,12 @@ const SYMBOLS = [
 	":",
 	",",
 ];
+const KEYWORDS = [
+	"and",
+	"is",
+	"or",
+	"not",
+]
 
 
 static func apply(code: String) -> String:
@@ -46,7 +52,7 @@ static func apply(code: String) -> String:
 	var string_regex = RegEx.new()
 	string_regex.compile(r"([\"'])(?:(?=(\\?))\2.)*?\1")
 	var string_matches = string_regex.search_all(code)
-	var string_map = { }
+	var string_map = {}
 
 	for i in range(string_matches.size()):
 		var match = string_matches[i]
@@ -58,7 +64,7 @@ static func apply(code: String) -> String:
 	var comment_regex = RegEx.new()
 	comment_regex.compile("#.*")
 	var comment_matches = comment_regex.search_all(code)
-	var comment_map = { }
+	var comment_map = {}
 
 	for i in range(comment_matches.size()):
 		var match = comment_matches[i]
@@ -70,7 +76,7 @@ static func apply(code: String) -> String:
 	var ref_regex = RegEx.new()
 	ref_regex.compile(r"\$[^.]*")
 	var ref_matches = ref_regex.search_all(code)
-	var ref_map = { }
+	var ref_map = {}
 
 	for i in range(ref_matches.size()):
 		var match = ref_matches[i]
@@ -99,8 +105,8 @@ static func _format_operators_and_commas(code: String) -> String:
 		new_code = indent_regex.sub(code, "\t", true)
 
 	var symbols_regex = "(" + ")|(".join(SYMBOLS) + ")"
-	var operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
-	code = operator_regex.sub(code, " $1 ", true)
+	var symbols_operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
+	code = symbols_operator_regex.sub(code, " $1 ", true)
 
 	# : =  => :=
 	var define_regex = RegEx.create_from_string(r": *=")
@@ -110,11 +116,18 @@ static func _format_operators_and_commas(code: String) -> String:
 	var trim_left_regex = RegEx.create_from_string(r"(?<=[\w\)\]]) *([\(:,])(?!=)")
 	code = trim_left_regex.sub(code, "$1", true)
 
-	var trim_inside_left_regex = RegEx.create_from_string(r"([\(]) *")
+	var trim_inside_left_regex = RegEx.create_from_string(r"([\(\{}]) *")
 	code = trim_inside_left_regex.sub(code, "$1", true)
 
-	var trim_inside_right_regex = RegEx.create_from_string(r" *([\)])")
+	var trim_inside_right_regex = RegEx.create_from_string(r" *([\)\}])")
 	code = trim_inside_right_regex.sub(code, "$1", true)
+
+	var keywoisrd_regex = r"|".join(KEYWORDS)
+	var keyword_operator_regex = RegEx.create_from_string(r"(" + keywoisrd_regex + r")([\(\[])")
+	code = keyword_operator_regex.sub(code, " $1 $2", true)
+
+	var trim_inline_tab = RegEx.create_from_string(r"(\t*.*?)\t*")
+	code = trim_inline_tab.sub(code, "$1", true)
 
 	var trim_regex = RegEx.new()
 	trim_regex.compile("[ \t]*\n")
