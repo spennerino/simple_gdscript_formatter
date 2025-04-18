@@ -123,8 +123,8 @@ static func _format_operators_and_commas(code: String) -> String:
 	code = trim_inside_right_regex.sub(code, "$1", true)
 
 	var keywoisrd_regex = r"|".join(KEYWORDS)
-	var keyword_operator_regex = RegEx.create_from_string(r"(" + keywoisrd_regex + r")([\(\[])")
-	code = keyword_operator_regex.sub(code, " $1 $2", true)
+	var keyword_operator_regex = RegEx.create_from_string(r"(?<=[ \)\]])(" + keywoisrd_regex + r")(?=[ \(\[])")
+	code = keyword_operator_regex.sub(code, " $1 ", true)
 
 	var trim_inline_tab = RegEx.create_from_string(r"(\t*.*?)\t*")
 	code = trim_inline_tab.sub(code, "$1", true)
