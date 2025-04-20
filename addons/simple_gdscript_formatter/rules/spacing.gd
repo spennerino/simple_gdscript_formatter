@@ -108,36 +108,39 @@ static func _format_operators_and_commas(code: String) -> String:
 	var symbols_operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
 	code = symbols_operator_regex.sub(code, " $1 ", true)
 
-	# : =  => :=
-	var define_regex = RegEx.create_from_string(r": *=")
-	code = define_regex.sub(code, ":=", true)
+	# ": =" => ":="
+	code = RegEx.create_from_string(r": *=").sub(code, ":=", true)
 
-	# a ( => a(
-	var trim_left_regex = RegEx.create_from_string(r"(?<=[\w\)\]]) *([\(:,])(?!=)")
-	code = trim_left_regex.sub(code, "$1", true)
+	# "a (" => "a("
+	code = RegEx.create_from_string(r"(?<=[\w\)\]]) *([\(:,])(?!=)").sub(code, "$1", true)
 
-	var trim_inside_left_regex = RegEx.create_from_string(r"([\(\{}]) *")
-	code = trim_inside_left_regex.sub(code, "$1", true)
+	# "( a" => "(a"
+	code = RegEx.create_from_string(r"([\(\{}]) *").sub(code, "$1", true)
 
-	var trim_inside_right_regex = RegEx.create_from_string(r" *([\)\}])")
-	code = trim_inside_right_regex.sub(code, "$1", true)
+	# "a )" => "a)"
+	code = RegEx.create_from_string(r" *([\)\}])").sub(code, "$1", true)
 
 	var keywoisrd_regex = r"|".join(KEYWORDS)
 	var keyword_operator_regex = RegEx.create_from_string(r"(?<=[ \)\]])(" + keywoisrd_regex + r")(?=[ \(\[])")
 	code = keyword_operator_regex.sub(code, " $1 ", true)
 
-	var trim_inline_tab = RegEx.create_from_string(r"(\t*.*?)\t*")
-	code = trim_inline_tab.sub(code, "$1", true)
+	# tab "a 	=" => "a ="
+	code = RegEx.create_from_string(r"(\t*.*?)\t*").sub(code, "$1", true)
 
-	var trim_regex = RegEx.new()
-	trim_regex.compile("[ \t]*\n")
-	code = trim_regex.sub(code, "\n", true)
+	#trim
+	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
+
+	# "    " => " "
 	code = RegEx.create_from_string(" +").sub(code, " ", true)
+
+	# "= - a" => "= -a"
+	code = RegEx.create_from_string(r"= - ").sub(code, "= -", true)
+
 	return code
 
 
 static func _replace(text: String, what: String, forwhat: String) -> String:
 	var index := text.find(what)
-	if index != - 1:
+	if index != -1:
 		text = text.substr(0, index) + forwhat + text.substr(index + what.length())
 	return text

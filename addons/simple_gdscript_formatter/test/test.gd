@@ -18,6 +18,7 @@ func func_a(     param1:int, param2    :float=    1.0)  :
 	if c[0] != c[3]           :
 		a = (a+b)/   (b-a)
 		a = (a+b) /(b-   a      )
+		a     =  -				90
 	
 	# Arithmetic operations
 	result=a  +b
