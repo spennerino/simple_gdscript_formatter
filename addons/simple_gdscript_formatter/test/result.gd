@@ -17,6 +17,7 @@ func func_a(param1: int, param2: float = 1.0):
 		a = (a + b) / (b - a)
 		a = (a + b) / (b - a)
 		a = -90
+		a = Vector3(-90.0, 0.3, -90)
 
 	# Arithmetic operations
 	result = a + b
