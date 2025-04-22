@@ -1,3 +1,4 @@
 # simple_gdscript_formatter
- 
-simple gdscript formatter(Ctrl + Alt + L)
+
+Format GDScript (Ctrl + Alt + L)
+Open In External Editor (Ctrl + E)

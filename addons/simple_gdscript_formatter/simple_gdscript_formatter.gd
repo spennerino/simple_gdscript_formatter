@@ -1,13 +1,14 @@
 @tool
 extends EditorPlugin
 
-var FORMAT_ACTION := "simple_gdscript_formatter/format_code"
+const FORMAT_ACTION = "simple_gdscript_formatter/format"
+const OPEN_EXTERNAL_ACTION = "simple_gdscript_formatter/open_in_external_editor"
 var format_key: InputEventKey
+var open_external_key: InputEventKey
 
 
 func _enter_tree():
-	add_tool_menu_item("Format GDScript (Ctrl+Alt+L)", _on_format_code)
-
+	add_tool_menu_item("Format GDScript", _on_format_code)
 	if InputMap.has_action(FORMAT_ACTION):
 		InputMap.erase_action(FORMAT_ACTION)
 	InputMap.add_action(FORMAT_ACTION)
@@ -18,10 +19,22 @@ func _enter_tree():
 	format_key.alt_pressed = true
 	InputMap.action_add_event(FORMAT_ACTION, format_key)
 
+	add_tool_menu_item("Open In External Editor", _open_external)
+	if InputMap.has_action(OPEN_EXTERNAL_ACTION):
+		InputMap.erase_action(OPEN_EXTERNAL_ACTION)
+	InputMap.add_action(OPEN_EXTERNAL_ACTION)
+
+	open_external_key = InputEventKey.new()
+	open_external_key.keycode = KEY_E
+	open_external_key.ctrl_pressed = true
+	InputMap.action_add_event(OPEN_EXTERNAL_ACTION, open_external_key)
+
 
 func _exit_tree():
-	remove_tool_menu_item("Format GDScript (Ctrl+Alt+L)")
+	remove_tool_menu_item("Format GDScript")
 	InputMap.erase_action(FORMAT_ACTION)
+	remove_tool_menu_item("Open In External Editor")
+	InputMap.erase_action(OPEN_EXTERNAL_ACTION)
 
 
 func _on_format_code():
@@ -43,7 +56,29 @@ func _on_format_code():
 			text_edit.scroll_vertical = scroll_vertical
 
 
+func _open_external() -> void:
+	var script_editor := EditorInterface.get_script_editor()
+	var current_editor := script_editor.get_current_editor()
+	if current_editor and current_editor.is_class("ScriptTextEditor"):
+		var file: String = ProjectSettings.globalize_path(script_editor.get_current_script().resource_path)
+		var project: String = ProjectSettings.globalize_path("res://")
+		var exec_path: String = EditorInterface.get_editor_settings().get_setting("text_editor/external/exec_path")
+		var exec_flags: String = EditorInterface.get_editor_settings().get_setting("text_editor/external/exec_flags")
+		if exec_path and exec_flags:
+			var col = current_editor.get_base_editor().get_caret_column(0)
+			var line = current_editor.get_base_editor().get_caret_line(0)
+			if exec_path.contains("rider"):
+				var tabs := RegEx.create_from_string("\t*").search(current_editor.get_base_editor().get_line(line).substr(0, col))
+				if tabs:
+					col += tabs.get_string().length() * 3
+			var arguments: Array[String] = []
+			for flag in exec_flags.split(" "):
+				arguments.append(flag.format({"project": project, "col": col, "line": line + 1, "file": file}))
+			OS.execute(exec_path, arguments)
+
+
 func _shortcut_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.is_pressed():
-		if Input.is_action_pressed(FORMAT_ACTION):
-			_on_format_code()
+	if Input.is_action_pressed(FORMAT_ACTION):
+		_on_format_code()
+	if Input.is_action_pressed(OPEN_EXTERNAL_ACTION):
+		_open_external()
