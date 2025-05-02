@@ -134,7 +134,7 @@ static func _format_operators_and_commas(code: String) -> String:
 	code = RegEx.create_from_string(" +").sub(code, " ", true)
 
 	# "= - a" => "= -a"
-	code = RegEx.create_from_string(r"([=,(] ?)- ").sub(code, "$1-", true)
+	code = RegEx.create_from_string(r"([=,(<>] ?)- ").sub(code, "$1-", true)
 
 	return code
 
