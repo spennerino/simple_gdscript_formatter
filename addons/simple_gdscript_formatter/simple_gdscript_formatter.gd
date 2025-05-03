@@ -40,7 +40,7 @@ func _exit_tree():
 func _on_format_code():
 	var current_editor := EditorInterface.get_script_editor().get_current_editor()
 	if current_editor and current_editor.is_class("ScriptTextEditor"):
-		var text_edit = current_editor.get_base_editor()
+		var text_edit := current_editor.get_base_editor() as CodeEdit
 		var code = text_edit.text
 		var formatter = Formatter.new()
 		var formatted_code = formatter.format_code(code)
@@ -54,6 +54,8 @@ func _on_format_code():
 			text_edit.set_caret_column(caret_column)
 			text_edit.scroll_horizontal = scroll_horizontal
 			text_edit.scroll_vertical = scroll_vertical
+			text_edit.move_lines_down()
+			text_edit.move_lines_up()
 
 
 func _open_external() -> void:
@@ -74,7 +76,7 @@ func _open_external() -> void:
 			var arguments: Array[String] = []
 			for flag in exec_flags.split(" "):
 				arguments.append(flag.format({"project": project, "col": col, "line": line + 1, "file": file}))
-			OS.execute(exec_path, arguments)
+			OS.execute_with_pipe(exec_path, arguments, false)
 
 
 func _shortcut_input(event: InputEvent) -> void:

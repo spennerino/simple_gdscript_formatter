@@ -98,11 +98,11 @@ static func apply(code: String) -> String:
 
 
 static func _format_operators_and_commas(code: String) -> String:
-	var indent_regex = RegEx.create_from_string(r"^\s{4}")
-	var new_code = indent_regex.sub(code, "\t", true)
+	var indent_regex = RegEx.create_from_string(r"(\n\t*) {4}")
+	var new_code = indent_regex.sub(code, "$1\t", true)
 	while(code != new_code):
 		code = new_code
-		new_code = indent_regex.sub(code, "\t", true)
+		new_code = indent_regex.sub(code, "$1\t", true)
 
 	var symbols_regex = "(" + ")|(".join(SYMBOLS) + ")"
 	var symbols_operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
@@ -134,8 +134,7 @@ static func _format_operators_and_commas(code: String) -> String:
 	code = RegEx.create_from_string(" +").sub(code, " ", true)
 
 	# "= - a" => "= -a"
-	code = RegEx.create_from_string(r"([" + symbols_regex + "] ?)- ").sub(code, "$1-", true)
-
+	code = RegEx.create_from_string(r"((" + symbols_regex + ") ?)- ").sub(code, "$1-", true)
 	return code
 
 

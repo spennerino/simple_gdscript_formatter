@@ -9,7 +9,7 @@ static func apply(code: String) -> String:
 
 static func _blank_for_func_class(code: String) -> String:
 	var func_class_regex = RegEx.create_from_string(".*(func|class) .*")
-	var comment_line_regex = RegEx.create_from_string(r"^\s*#")
+	var comment_line_regex = RegEx.create_from_string(r"^\s*(#|@warning)")
 	var lines := code.split('\n')
 	var modified_lines: Array[String] = []
 	for line: String in lines:

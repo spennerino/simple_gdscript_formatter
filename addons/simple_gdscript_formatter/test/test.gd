@@ -4,7 +4,7 @@ extends   Object
 
 
 
-
+@warning_ignore("assert_always_false")
 class class_a:
 	pass
 # All symbols in comment for testing purposes
