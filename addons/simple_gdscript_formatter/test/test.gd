@@ -1,4 +1,8 @@
-extends   Object
+@tool
+
+
+extends   Node
+
 
 
 
@@ -76,3 +80,11 @@ func func_a(     param1:int, param2    :float=    1.0)  :
 # Arrow-returned function
 func get_value()  ->  int:
 	return 123
+#this is signal
+signal ss
+func _init() -> void:
+	pass
+#this is export
+@export var ee:=1
+static func t()->void:
+	pass

@@ -1,8 +1,17 @@
-extends Object
+@tool
+
+extends Node
+#this is signal
+signal ss
+#this is export
+@export var ee := 1
 
 
-@warning_ignore("assert_always_false")
-class class_a:
+static func t() -> void:
+	pass
+
+
+func _init() -> void:
 	pass
 
 
@@ -77,3 +86,8 @@ func func_a(param1: int, param2: float = 1.0):
 # Arrow-returned function
 func get_value() -> int:
 	return 123
+
+
+@warning_ignore("assert_always_false")
+class class_a:
+	pass

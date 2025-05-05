@@ -42,7 +42,7 @@ func _on_format_code():
 	if current_editor and current_editor.is_class("ScriptTextEditor"):
 		var text_edit := current_editor.get_base_editor() as CodeEdit
 		var code = text_edit.text
-		var formatter = Formatter.new()
+		var formatter = preload("formatter.gd").new()
 		var formatted_code = formatter.format_code(code)
 		if formatted_code && code != formatted_code:
 			var scroll_horizontal = text_edit.scroll_horizontal
@@ -55,7 +55,7 @@ func _on_format_code():
 			text_edit.scroll_horizontal = scroll_horizontal
 			text_edit.scroll_vertical = scroll_vertical
 			text_edit.move_lines_down()
-			text_edit.move_lines_up()
+			text_edit.undo()
 
 
 func _open_external() -> void:
