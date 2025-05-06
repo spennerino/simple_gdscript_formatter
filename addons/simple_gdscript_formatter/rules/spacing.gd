@@ -44,8 +44,6 @@ const KEYWORDS = [
 	"not",
 ]
 
-static var o: int = 0
-
 
 static func apply(code: String) -> String:
 	var indent_regex = RegEx.create_from_string(r"(\n\t*) {4}")
@@ -75,7 +73,7 @@ static func apply(code: String) -> String:
 	code = keyword_operator_regex.sub(code, " $1 ", true)
 
 	# tab "a 	=" => "a ="
-	code = RegEx.create_from_string(r"(\t*.*?)\t*").sub(code, "$1", true)
+	code = RegEx.create_from_string(r"(\S)\t+").sub(code, "$1 ", true)
 
 	#trim
 	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
@@ -99,12 +97,10 @@ static func _handle_indent(code: String, indent_level: int, left: String, right:
 	while parts.size() > 0:
 		for part in parts:
 			var escaped := regex_escape(part)
-			var pattern := "(?<=^|\n)(.*?" + escaped + ")"
-			var reg := RegEx.new()
-			reg.compile(pattern)
-			var match := reg.search(code)
-			if match:
-				var block := match.get_string()
+			var reg := RegEx.create_from_string("(?<=^|\n)(.*?" + escaped + ")")
+			var found := reg.search(code)
+			if found:
+				var block := found.get_string()
 				var lines := block.split("\n")
 				if lines.size() > 1:
 					var base_indent := get_indent_level(lines[0])
@@ -118,18 +114,31 @@ static func _handle_indent(code: String, indent_level: int, left: String, right:
 static func format_block(lines: Array[String], base_indent: int, indent_level: int, right: String) -> String:
 	var result := []
 	indent_level += base_indent
+	var block_indent_stack := []
+
 	for i in range(lines.size()):
+		var line_indent = get_indent_level(lines[i])
+
+		while block_indent_stack.size() > 0 and line_indent <= block_indent_stack[ - 1]:
+			block_indent_stack.pop_back()
+
 		var line := lines[i].lstrip("\t")
+
 		if i == 0:
 			result.append(lines[i])
 		elif i == lines.size() - 1 and line.begins_with(right):
 			result.append("\t".repeat(base_indent) + line)
 		else:
-			result.append("\t".repeat(indent_level) + line)
+			result.append("\t".repeat(indent_level + block_indent_stack.size()) + line)
+
+		if line.begins_with("if") or line.begins_with("match"):
+			block_indent_stack.append(line_indent)
+
 	return "\n".join(result)
 
 
 static func get_indent_level(line: String) -> int:
+	var regex := RegEx.new()
 	return line.length() - line.lstrip("\t").length()
 
 

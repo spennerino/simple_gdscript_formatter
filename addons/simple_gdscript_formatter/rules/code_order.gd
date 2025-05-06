@@ -47,7 +47,9 @@ static func apply(code: String) -> String:
 	assert(code.strip_edges() == "", "Unprocessed code:" + code)
 	var result := ""
 	for key in categorized_blocks:
-		for block in categorized_blocks.get(key):
+		for block: String in categorized_blocks.get(key):
+			if not block.begins_with("\n") and result.length() > 0:
+				result += "\n"
 			result += block
 	return result
 

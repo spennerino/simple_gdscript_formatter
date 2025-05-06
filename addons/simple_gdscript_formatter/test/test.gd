@@ -98,7 +98,11 @@ b:int):
 			)
 	):
 		pass
-
+	ss.connect(func() -> void:
+		a+1
+		if true:
+			a+2
+		)
 	
 signal ss
 func _init() -> void:

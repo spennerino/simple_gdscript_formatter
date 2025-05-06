@@ -1,8 +1,8 @@
 @tool
 extends EditorPlugin
 
-const FORMAT_ACTION = "simple_gdscript_formatter/format"
-const OPEN_EXTERNAL_ACTION = "simple_gdscript_formatter/open_in_external_editor"
+const FORMAT_ACTION = &"simple_gdscript_formatter/format"
+const OPEN_EXTERNAL_ACTION = &"simple_gdscript_formatter/open_in_external_editor"
 var format_key: InputEventKey
 var open_external_key: InputEventKey
 
