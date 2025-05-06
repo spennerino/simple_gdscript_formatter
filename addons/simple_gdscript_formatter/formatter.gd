@@ -18,7 +18,7 @@ static func _replace(text: String, what: String, forwhat: String) -> String:
 
 
 func format_code(code: String) -> String:
-	var string_regex = RegEx.create_from_string(r"([\"'])(?:(?=(\\?))\2.)*?\1")
+	var string_regex = RegEx.create_from_string(r"\&?([\"'])(?:(?=(\\?))\2.)*?\1")
 	var string_matches = string_regex.search_all(code)
 	var string_map = {}
 
