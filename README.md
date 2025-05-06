@@ -2,6 +2,7 @@
 
 ### Format GDScript (`Ctrl + Alt + L`)
 *no Python dependencies*  
+Follow the GDScript style guide.
 
 ### Open in External Editor (`Ctrl + E`)
 *Bypasses the "Use External Editor" setting*  
