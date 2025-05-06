@@ -4,8 +4,8 @@ const RuleBlankLines = preload("rules/blank_lines.gd")
 
 
 static func _apply_rules(code: String) -> String:
-	code = CodeOrder.apply(code)
 	code = RuleSpacing.apply(code)
+	code = CodeOrder.apply(code)
 	code = RuleBlankLines.apply(code)
 	return code
 

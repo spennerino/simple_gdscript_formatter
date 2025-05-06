@@ -81,6 +81,25 @@ func func_a(     param1:int, param2    :float=    1.0)  :
 func get_value()  ->  int:
 	return 123
 #this is signal
+enum afewfe{AAA,
+							BBB,CCC}
+func aacc(a:int,
+b:int):
+	var categorized_blocks := {
+			 "tool": [], # @tool, @icon, @static_unload
+			 "class_name": [], # class_name
+			 "extends": [], # extends
+			}
+	if(
+			1 > 0
+			and 0 == 9
+			and(66 > 0
+					and 1 != 0
+			)
+	):
+		pass
+
+	
 signal ss
 func _init() -> void:
 	pass
