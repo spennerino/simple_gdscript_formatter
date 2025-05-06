@@ -52,10 +52,10 @@ func _on_format_code():
 			text_edit.text = formatted_code
 			text_edit.set_caret_line(caret_line)
 			text_edit.set_caret_column(caret_column)
-			text_edit.scroll_horizontal = scroll_horizontal
-			text_edit.scroll_vertical = scroll_vertical
 			text_edit.move_lines_down()
 			text_edit.undo()
+			text_edit.scroll_horizontal = scroll_horizontal
+			text_edit.scroll_vertical = scroll_vertical
 
 
 func _open_external() -> void:
