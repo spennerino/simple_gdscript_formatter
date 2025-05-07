@@ -6,10 +6,13 @@ signal sig
 
 # Enum
 enum State {IDLE,
-	WALKING, RUNNING}
+	WALKING, RUNNING
+}
+#export range
+@export_range(-90.0, 0.0, 0.1, "range")
+var range: float = -PI / 2
 # Export
-@export var example_var := 	1
-
+@export var example_var := 1
 # Multiline string
 var weird_multiline_str := """ 
 abcde \"\"\"""more
@@ -24,7 +27,7 @@ static func do_static_thing() -> void:
 	pass
 
 
-func _init() -> 	void:
+func _init() -> void:
 	pass
 
 
@@ -33,12 +36,12 @@ func run_all_ops(val1: int, val2: float = 1.0):
 	var a = 10
 	var b = 5
 	var result = 0
-
-	var arr = [1, 2, 	3]
-	if arr[0] != 	arr[3] and a > -1:
+#top level comment in func
+	var arr = [1, 2, 3]
+	if arr[0] != arr[3] and a > -1:
 		a = (a + b) / (b - a)
 		a = (a + b) / (b - a)
-		a = 	 - 90
+		a = -90
 
 	# Arithmetic
 	result = a + b
@@ -51,7 +54,7 @@ func run_all_ops(val1: int, val2: float = 1.0):
 	# Bitwise
 	result = a & b
 	result = a | b
-	result = a ^ 	b
+	result = a ^ b
 	result = ~a
 	result = a << b
 	result = a >> b
@@ -113,7 +116,7 @@ func test_misc():
 		_:
 			print("default")
 
-	for i in range(0, 	5):
+	for i in range(0, 5):
 		print(i)
 
 	while val > 0:

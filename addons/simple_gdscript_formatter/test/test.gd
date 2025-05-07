@@ -13,7 +13,7 @@ func	run_all_ops(	val1	:int,val2:float	=1.0	):
 	var	a=10
 	var		b =5
 	var	result =0
-
+#top level comment in func
 	var	arr=[1 , 2 ,	3]
 	if arr[0]	!=	arr[3]	and a > -1:
 		a=(a+b)/(b-a)
@@ -81,8 +81,9 @@ signal sig
 
 func _init()	->	void:
 	pass
-
-
+#export range
+@export_range(- 90.0, 0.0, 0.1, "range")
+var range: float = -PI / 2
 # Multiline string
 var	weird_multiline_str:=""" 
 abcde \"\"\"""more
@@ -102,7 +103,8 @@ func	get_it()->int:
 
 # Enum
 enum State	{ IDLE,
-		WALKING, RUNNING }
+		WALKING, RUNNING 
+}
 
 # Match, loops, await, nested func
 func test_misc():

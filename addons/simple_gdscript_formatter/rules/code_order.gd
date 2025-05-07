@@ -1,27 +1,27 @@
 static func apply(code: String) -> String:
 	var categorized_blocks := {
-		 "tool": [], # @tool, @icon, @static_unload
-		 "class_name": [], # class_name
-		 "extends": [], # extends
-		 "doc_comment": [], # ## doc comment
-		 "signals": [],
-		 "enums": [],
-		 "constants": [],
-		 "static_vars": [],
-		 "export_vars": [],
-		 "vars": [],
-		 "onready_vars": [],
-		 "_static_init": [], # func _static_init()
-		 "static_methods": [], # other static methods
-		 "virtual__init": [], # func _init()
-		 "virtual__enter_tree": [], # func _enter_tree()
-		 "virtual__ready": [], # func _ready()
-		 "virtual__process": [], # func _process()
-		 "virtual__physics_process": [], # func _physics_process()
-		 "virtual_others": [], # other virtual methods (starting with "_")
-		 "custom_overridden": [], # func _custom()
-		 "methods": [], # remaining methods
-		 "subclasses": [], # class Foo, or class Bar extends ...
+		"tool": [], # @tool, @icon, @static_unload
+		"class_name": [], # class_name
+		"extends": [], # extends
+		"doc_comment": [], # ## doc comment
+		"signals": [],
+		"enums": [],
+		"constants": [],
+		"static_vars": [],
+		"export_vars": [],
+		"vars": [],
+		"onready_vars": [],
+		"_static_init": [], # func _static_init()
+		"static_methods": [], # other static methods
+		"virtual__init": [], # func _init()
+		"virtual__enter_tree": [], # func _enter_tree()
+		"virtual__ready": [], # func _ready()
+		"virtual__process": [], # func _process()
+		"virtual__physics_process": [], # func _physics_process()
+		"virtual_others": [], # other virtual methods (starting with "_")
+		"custom_overridden": [], # func _custom()
+		"methods": [], # remaining methods
+		"subclasses": [], # class Foo, or class Bar extends ...
 	}
 
 	code = extract_and_categorize(r"@tool", "tool", categorized_blocks, code, true)
@@ -59,7 +59,7 @@ static func extract_and_categorize(pattern: String, category_key: String, catego
 	var pre_pattern = r"(\n\s*__COMMENT__.*)*(\n@.*)?(^|\n+)"
 	if is_annotation:
 		pre_pattern = r"(\ns*__COMMENT__.*)*(^|\n+)"
-	regex_obj = RegEx.create_from_string(pre_pattern + pattern + r"[\S\s]*?(?=\n+(@|\w)|$)")
+	regex_obj = RegEx.create_from_string(pre_pattern + pattern + r"[\S\s]*?(?=(\n\s*__COMMENT__.*)*\n+(@|[^\W_])|$)")
 	var found_blocks := regex_obj.search_all(code)
 	for found in found_blocks:
 		categorized_blocks.get(category_key).append(found.get_string())

@@ -52,6 +52,9 @@ static func apply(code: String) -> String:
 		code = new_code
 		new_code = indent_regex.sub(code, "$1\t", true)
 
+	# strip inline tabs
+	code = RegEx.create_from_string(r"(\S ?)\t+").sub(code, "$1 ", true)
+
 	var symbols_regex = "(" + ")|(".join(SYMBOLS) + ")"
 	var symbols_operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
 	code = symbols_operator_regex.sub(code, " $1 ", true)
@@ -62,18 +65,12 @@ static func apply(code: String) -> String:
 	# "a (" => "a("
 	code = RegEx.create_from_string(r"(?<=[\w\)\]]) *([\(:,])(?!=)").sub(code, "$1", true)
 
-	# "( a" => "(a"
-	code = RegEx.create_from_string(r"([\(\{}]) *").sub(code, "$1", true)
-
 	# "a )" => "a)"
 	code = RegEx.create_from_string(r" *([\)\}])").sub(code, "$1", true)
 
 	var keywoisrd_regex = r"|".join(KEYWORDS)
 	var keyword_operator_regex = RegEx.create_from_string(r"(?<=[ \)\]])(" + keywoisrd_regex + r")(?=[ \(\[])")
 	code = keyword_operator_regex.sub(code, " $1 ", true)
-
-	# tab "a 	=" => "a ="
-	code = RegEx.create_from_string(r"(\S)\t+").sub(code, "$1 ", true)
 
 	#trim
 	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
@@ -83,6 +80,9 @@ static func apply(code: String) -> String:
 
 	# "= - a" => "= -a"
 	code = RegEx.create_from_string(r"((" + symbols_regex + ") ?)- ").sub(code, "$1-", true)
+
+	# "( a" => "(a"
+	code = RegEx.create_from_string(r"([{\(\[]) *(" + symbols_regex + ")? *").sub(code, "$1$2", true)
 
 	code = _handle_indent(code, 1, "[", "]")
 	code = _handle_indent(code, 1, "{", "}")
@@ -119,7 +119,7 @@ static func format_block(lines: Array[String], base_indent: int, indent_level: i
 	for i in range(lines.size()):
 		var line_indent = get_indent_level(lines[i])
 
-		while block_indent_stack.size() > 0 and line_indent <= block_indent_stack[ - 1]:
+		while block_indent_stack.size() > 0 and line_indent <= block_indent_stack[-1]:
 			block_indent_stack.pop_back()
 
 		var line := lines[i].lstrip("\t")
