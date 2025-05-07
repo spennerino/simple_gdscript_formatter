@@ -18,7 +18,7 @@ static func _replace(text: String, what: String, forwhat: String) -> String:
 
 
 func format_code(code: String) -> String:
-	var string_regex = RegEx.create_from_string(r"\&?([\"'])(?:(?=(\\?))\2.)*?\1")
+	var string_regex = RegEx.create_from_string(r"\&?([\"'])(?:(?=(\\?))\2[\s\S])*?\1")
 	var string_matches = string_regex.search_all(code)
 	var string_map = {}
 
@@ -50,7 +50,7 @@ func format_code(code: String) -> String:
 		var placeholder = "__REF__%d__" % i
 		ref_map[placeholder] = original
 		code = _replace(code, original, placeholder)
-
+	
 	code = _apply_rules(code)
 
 	for placeholder in ref_map:

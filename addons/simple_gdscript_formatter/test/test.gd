@@ -1,113 +1,142 @@
 @tool
 
-
-extends   Node
-
-
-
-
+extends	Node
 
 
 @warning_ignore("assert_always_false")
-class class_a:
+class		WeirdlyFormattedClass:
 	pass
-# All symbols in comment for testing purposes
-# ** << >> == != >= <= && || += -= *= /= %= **= &= ^= |= ~= <<= >>= := -> & | ^ - + / * > < - %
-func func_a(     param1:int, param2    :float=    1.0)  :
-	var a=  10
-	var b =5
-	var result=0
 
-	var c = [1 ,2    ,3]
-	if c[0] != c[3]           and a> - 1:
-		a = (a+b)/   (b-a)
-		a = (a+b) /(b-   a      )
-		a     =  -				90
 
-	# Arithmetic operations
-	result=a  +b
-	result =a- b
-	result= a*b
-	result = a /b
-	result=a% b
-	result=a** b
+# Test ops: ** << >> == != >= <= && || += -= *= /= %= **= &= ^= |= ~= <<= >>= := -> & | ^ - + / * > < %
+func	run_all_ops(	val1	:int,val2:float	=1.0	):
+	var	a=10
+	var		b =5
+	var	result =0
 
-	# Bitwise operations
+	var	arr=[1 , 2 ,	3]
+	if arr[0]	!=	arr[3]	and a > -1:
+		a=(a+b)/(b-a)
+		a=(a	+ b)/(b-a)
+		a	=	-90
+
+	# Arithmetic
+	result = a+b
+	result=a-b
+	result=a*b
+	result=a /b
+	result=a	% b
+	result=a	**b
+
+	# Bitwise
 	result=a&b
-	result =a| b
-	result= a^b
+	result =a|b
+	result=a^	b
 	result=~a
 	result= a<<b
-	result= a>> b
+	result=a>>b
 
-	# Comparison operations
-	var eq=a== b
-	var neq=a !=b
-	var gt = a> b
-	var lt= a< b
-	var gte=a>=b
-	var lte = a<= b
+	# Comparison
+	var eq=a==b
+	var neq = a!=b
+	var gt=a>b
+	var lt = a< b
+	var gte = a>=b
+	var lte= a <=b
 
-	# Logical operations
-	var and_op=a>0&&b> 0
-	var or_op =a>0 ||b<0
+	# Logical
+	var anded = a > 0 && b >0
+	var ored = a>0 || b<0
 
-	# Assignment operations
+	# Assignment
 	a+=b
-	a -=b
-	a*= b
-	a/=b
+	a	-= b
+	a *=b
+	a/= b
 	a%=b
 	a**=b
 	a&=b
-	a|= b
-	a^=b
+	a |=b
+	a^= b
 	a<<=b
-	a>>=b
+	a>>= b
 
-	# Struct-like syntax (pseudo-usage, for symbol testing)
-	var dict := {   "key" : "value"  }
+	# Dictionary
+	var d := {
+		"hello"	:"world"
+	}
 
-	# := assignment
-	var x  :=42
+	# func-as-var
+	var cb := func ()->void:
+		print("callback")
 
-	# Function declaration with arrow return type
-	var callback :=   func  ()-> void:
-		print("Callback")
+	# Instancing
+	var obj = WeirdlyFormattedClass.new()
 
-	# Class usage
-	var obj=class_a.new  (  )
-# Arrow-returned function
-func get_value()  ->  int:
-	return 123
-#this is signal
-enum afewfe{AAA,
-							BBB,CCC}
-func aacc(a:int,
-b:int):
-	var categorized_blocks := {
-			 "tool": [], # @tool, @icon, @static_unload
-			 "class_name": [], # class_name
-			 "extends": [], # extends
-			}
-	if(
-			1 > 0
-			and 0 == 9
-			and(66 > 0
-					and 1 != 0
-			)
+	# Signal
+	sig.emit()
+
+signal sig
+
+
+func _init()	->	void:
+	pass
+
+
+# Multiline string
+var	weird_multiline_str:=""" 
+abcde \"\"\"""more
+text
+"""
+
+# Export
+@export var example_var	:=	1
+
+# Static
+static func	do_static_thing(	)->void:
+	pass
+
+# Return
+func	get_it()->int:
+	return	123
+
+# Enum
+enum State	{ IDLE,
+		WALKING, RUNNING }
+
+# Match, loops, await, nested func
+func test_misc():
+	var val := 3
+	match val:
+		1:
+			print("one")
+		2,3:
+			print("two or three")
+		_:
+			print("default")
+
+	for i in range(0,	5):
+		print( i )
+
+	while val>0:
+		val-=1
+		if val==2: continue
+		if val==0:
+			break
+
+	await get_tree().create_timer(0.1).timeout
+
+	sig.connect(func() -> void:
+		if true:
+			print("inline")
+	)
+
+	# if-nesting
+	if (
+		1>0 and
+		2==2 and
+		(3!=4 and 5<6)
 	):
 		pass
-	ss.connect(func() -> void:
-		a+1
-		if true:
-			a+2
-		)
-	
-signal ss
-func _init() -> void:
-	pass
-#this is export
-@export var ee:=1
-static func t()->void:
-	pass
+
+var weird_colon := 42
