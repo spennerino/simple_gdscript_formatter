@@ -59,7 +59,7 @@ static func extract_and_categorize(pattern: String, category_key: String, catego
 	var pre_pattern = r"(\n\s*__COMMENT__.*)*(\n@.*)?(^|\n+)"
 	if is_annotation:
 		pre_pattern = r"(\ns*__COMMENT__.*)*(^|\n+)"
-	regex_obj = RegEx.create_from_string(pre_pattern + pattern + r"[\S\s]*?(?=(\n\s*__COMMENT__.*)*\n+(@|[^\W_])|$)")
+	regex_obj = RegEx.create_from_string(pre_pattern + pattern + r"[\S\s]*?(?=(\n\s*__COMMENT__.*)*?\n+(@|[^\W_])|$)")
 	var found_blocks := regex_obj.search_all(code)
 	for found in found_blocks:
 		categorized_blocks.get(category_key).append(found.get_string())
