@@ -13,6 +13,9 @@ enum State {IDLE,
 var range: float = -PI / 2
 # Export
 @export var example_var := 1
+
+# one line
+var my_dictionary = { key = "value" }
 # Multiline string
 var weird_multiline_str := """ 
 abcde \"\"\"""more
@@ -108,6 +111,13 @@ func get_it() -> int:
 # Match, loops, await, nested func
 func test_misc():
 	var val := 3
+	# if-nesting
+	if (
+			1 > 0 and
+			2 == 2 and
+			(3 != 4 and 5 < 6)
+	):
+		pass
 	match val:
 		1:
 			print("one")
@@ -130,13 +140,27 @@ func test_misc():
 	sig.connect(func() -> void:
 			if true:
 				print("inline")
-	)
-
-	# if-nesting
-	if(
+			# if-nesting
+			if (
 				1 > 0 and
 				2 == 2 and
 				(3 != 4 and 5 < 6)
+			):
+				pass
+			match val:
+				1:
+					print("one")
+				2, 3:
+					print("two or three")
+				_:
+					print("default")
+	)
+
+	# if-nesting
+	if (
+			1 > 0 and
+			2 == 2 and
+			(3 != 4 and 5 < 6)
 	):
 		pass
 
