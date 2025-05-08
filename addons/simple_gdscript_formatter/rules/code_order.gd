@@ -1,173 +1,66 @@
-const SYMBOLS = [
-r"\*\*=",
-r"\*\*",
-"<<=",
-">>=",
-"<<",
-">>",
-"==",
-"!=",
-">=",
-"<=",
-"&&",
-r"\|\|",
-r"\+=",
-"-=",
-r"\*=",
-"/=",
-"%=",
-"&=",
-r"\^=",
-r"\|=",
-"~=",
-":=",
-"->",
-r"&",
-r"\|",
-r"\^",
-"-",
-r"\+",
-"/",
-r"\*",
-">",
-"<",
-"-",
-"%",
-"=",
-":",
-",",
-];
-const KEYWORDS = [
-"and",
-"is",
-"or",
-"not",
-]
-
-
 static func apply(code: String) -> String:
-	var indent_regex = RegEx.create_from_string(r"(\n\t*) {4}")
-	var new_code = indent_regex.sub(code, "$1\t", true)
-	while(code != new_code):
-		code = new_code
-		new_code = indent_regex.sub(code, "$1\t", true)
+	var categorized_blocks := {
+		"tool": [], # @tool, @icon, @static_unload
+		"class_name": [], # class_name
+		"extends": [], # extends
+		"doc_comment": [], # ## doc comment
+		"signals": [],
+		"enums": [],
+		"constants": [],
+		"static_vars": [],
+		"export_vars": [],
+		"vars": [],
+		"onready_vars": [],
+		"_static_init": [], # func _static_init()
+		"static_methods": [], # other static methods
+		"virtual__init": [], # func _init()
+		"virtual__enter_tree": [], # func _enter_tree()
+		"virtual__ready": [], # func _ready()
+		"virtual__process": [], # func _process()
+		"virtual__physics_process": [], # func _physics_process()
+		"virtual_others": [], # other virtual methods (starting with "_")
+		"custom_overridden": [], # func _custom()
+		"methods": [], # remaining methods
+		"subclasses": [], # class Foo, or class Bar extends ...
+	}
 
-	# strip inline tabs
-	code = RegEx.create_from_string(r"(\S ?)\t+").sub(code, "$1 ", true)
-
-	var symbols_regex = "(" + ")|(".join(SYMBOLS) + ")"
-	var symbols_operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
-	code = symbols_operator_regex.sub(code, " $1 ", true)
-
-	# ": =" => ":="
-	code = RegEx.create_from_string(r": *=").sub(code, ":=", true)
-
-	# "a (" => "a("
-	code = RegEx.create_from_string(r"(?<=[\w\)\]]) *([\(:,])(?!=)").sub(code, "$1", true)
-
-	# "a )" => "a)"
-	code = RegEx.create_from_string(r" *([\)\}])").sub(code, "$1", true)
-
-	var keywoisrd_regex = r"|".join(KEYWORDS)
-	var keyword_operator_regex = RegEx.create_from_string(r"(?<=[ \)\]])(" + keywoisrd_regex + r")(?=[ \(\[])")
-	code = keyword_operator_regex.sub(code, " $1 ", true)
-
-	#trim
-	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
-
-	# "    " => " "
-	code = RegEx.create_from_string(" +").sub(code, " ", true)
-
-	# "= - a" => "= -a"
-	code = RegEx.create_from_string(r"((" + symbols_regex + ") ?)- ").sub(code, "$1-", true)
-
-	# "( a" => "(a"
-	code = RegEx.create_from_string(r"([{\(\[]) *(" + symbols_regex + ")? *").sub(code, "$1$2", true)
-
-	# inline {} spacing
-	code = RegEx.create_from_string(r"{ ?(.*)? ?}").sub(code, "{ $1 }", true)
-
-	code = _handle_indent(code, 1, "[", "]")
-	code = _handle_indent(code, 1, "{", "}")
-	code = _handle_indent(code, 2, "(", ")")
-	return code
-
-
-static func _handle_indent(code: String, indent_level: int, left: String, right: String) -> String:
-	var i = 1
-	var parts := find_outer_parentheses(code, i, left, right)
-
-	while parts.size() > 0:
-		for part in parts:
-			var escaped := regex_escape(part)
-			var reg := RegEx.create_from_string("(?<=^|\n)(.*?" + escaped + ")")
-			var found := reg.search(code)
-			if found:
-				var block := found.get_string()
-				var lines := block.split("\n")
-				if lines.size() > 1:
-					var base_indent := get_indent_level(lines[0])
-					var formatted := format_block(lines, base_indent, indent_level, right)
-					code = reg.sub(code, formatted)
-		i += 1
-		parts = find_outer_parentheses(code, i, left, right)
-	return code
-
-
-static func format_block(lines: Array[String], base_indent: int, indent_level: int, right: String) -> String:
-	var result := []
-	indent_level += base_indent
-	var block_indent_stack := []
-
-	for i in range(lines.size()):
-		var line_indent = get_indent_level(lines[i])
-
-		while block_indent_stack.size() > 0 and line_indent <= block_indent_stack[-1]:
-			block_indent_stack.pop_back()
-
-		var line := lines[i].lstrip("\t")
-
-		if i == 0:
-			result.append(lines[i])
-		elif i == lines.size() - 1 and line.begins_with(right):
-			result.append("\t".repeat(base_indent) + line)
-		else:
-			result.append("\t".repeat(indent_level + block_indent_stack.size()) + line)
-
-		if line.begins_with("if") or line.begins_with("match"):
-			block_indent_stack.append(line_indent)
-
-	return "\n".join(result)
-
-
-static func get_indent_level(line: String) -> int:
-	var regex := RegEx.new()
-	return line.length() - line.lstrip("\t").length()
-
-
-static func regex_escape(text: String) -> String:
-	var specials = "\\.+*?[^]$(){}=!<>|:-#\r\n\t\f"
-	var result := []
-	for c in text:
-		if specials.find(c) != -1:
-			result.append("\\")
-		result.append(c)
-	return "".join(result)
-
-
-static func find_outer_parentheses(text: String, target_level: int, left: String, right: String) -> Array:
-	var result := []
-	var depth := 0
-	var start := -1
-
-	for i in range(text.length()):
-		var c := text[i]
-		if c == left:
-			depth += 1
-			if depth == target_level:
-				start = i
-		elif c == right:
-			if depth == target_level and start != -1:
-				result.append(text.substr(start, i - start + 1))
-			depth -= 1
+	code = extract_and_categorize(r"@tool", "tool", categorized_blocks, code, true)
+	code = extract_and_categorize(r"class_name.*", "class_name", categorized_blocks, code)
+	code = extract_and_categorize(r"extends.*", "extends", categorized_blocks, code)
+	code = extract_and_categorize(r"signal.*", "signals", categorized_blocks, code)
+	code = extract_and_categorize(r"enum", "enums", categorized_blocks, code)
+	code = extract_and_categorize(r"const", "constants", categorized_blocks, code)
+	code = extract_and_categorize(r"static var", "static_vars", categorized_blocks, code)
+	code = extract_and_categorize(r"@export[\S\s]*?var", "export_vars", categorized_blocks, code, true)
+	code = extract_and_categorize(r"@onready[\S\s]*?var", "onready_vars", categorized_blocks, code, true)
+	code = extract_and_categorize(r"var", "vars", categorized_blocks, code)
+	code = extract_and_categorize(r"func _static_init", "_static_init", categorized_blocks, code)
+	code = extract_and_categorize(r"static func", "static_methods", categorized_blocks, code)
+	code = extract_and_categorize(r"func _init", "virtual__init", categorized_blocks, code)
+	code = extract_and_categorize(r"func _enter_tree", "virtual__enter_tree", categorized_blocks, code)
+	code = extract_and_categorize(r"func _ready", "virtual__ready", categorized_blocks, code)
+	code = extract_and_categorize(r"func _process", "virtual__process", categorized_blocks, code)
+	code = extract_and_categorize(r"func _physics_process", "virtual__physics_process", categorized_blocks, code)
+	code = extract_and_categorize(r"func _", "virtual_others", categorized_blocks, code)
+	code = extract_and_categorize(r"func ", "methods", categorized_blocks, code)
+	code = extract_and_categorize(r"class", "subclasses", categorized_blocks, code)
+	assert(code.strip_edges() == "", "Unprocessed code:" + code)
+	var result := ""
+	for key in categorized_blocks:
+		for block: String in categorized_blocks.get(key):
+			if not block.begins_with("\n") and result.length() > 0:
+				result += "\n"
+			result += block
 	return result
+
+
+static func extract_and_categorize(pattern: String, category_key: String, categorized_blocks: Dictionary, code: String, is_annotation := false) -> String:
+	var regex_obj: RegEx
+	var pre_pattern = r"(\n\s*__COMMENT__.*)*(\n@.*)?(^|\n+)"
+	if is_annotation:
+		pre_pattern = r"(\ns*__COMMENT__.*)*(^|\n+)"
+	regex_obj = RegEx.create_from_string(pre_pattern + pattern + r"[\S\s]*?(?=(\n\s*__COMMENT__.*)*?\n+(@|[^\W_])|$)")
+	var found_blocks := regex_obj.search_all(code)
+	for found in found_blocks:
+		categorized_blocks.get(category_key).append(found.get_string())
+	return regex_obj.sub(code, "", true)

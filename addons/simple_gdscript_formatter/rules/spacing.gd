@@ -84,6 +84,9 @@ static func apply(code: String) -> String:
 	# "( a" => "(a"
 	code = RegEx.create_from_string(r"([{\(\[]) *(" + symbols_regex + ")? *").sub(code, "$1$2", true)
 
+	# inline {} spacing
+	code = RegEx.create_from_string(r"{ ?(.*)? ?}").sub(code, "{ $1 }", true)
+
 	code = _handle_indent(code, 1, "[", "]")
 	code = _handle_indent(code, 1, "{", "}")
 	code = _handle_indent(code, 2, "(", ")")

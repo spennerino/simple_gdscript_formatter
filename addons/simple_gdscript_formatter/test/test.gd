@@ -7,6 +7,8 @@ extends	Node
 class		WeirdlyFormattedClass:
 	pass
 
+# one line
+var my_dictionary = {key = "value"}
 
 # Test ops: ** << >> == != >= <= && || += -= *= /= %= **= &= ^= |= ~= <<= >>= := -> & | ^ - + / * > < %
 func	run_all_ops(	val1	:int,val2:float	=1.0	):
