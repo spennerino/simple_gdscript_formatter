@@ -3,7 +3,6 @@
 extends Node
 
 signal sig
-
 # Enum
 enum State {IDLE,
 	WALKING, RUNNING
@@ -23,6 +22,7 @@ text
 """
 
 var weird_colon := 42
+@onready var v_box_container_3: VBoxContainer = $VBoxContainer/VBoxContainer3
 
 
 # Static

@@ -168,3 +168,4 @@ func test_misc():
 @warning_ignore("assert_always_false")
 class WeirdlyFormattedClass:
 	pass
+@onready var v_box_container_3: VBoxContainer = $VBoxContainer/VBoxContainer3

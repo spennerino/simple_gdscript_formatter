@@ -40,7 +40,7 @@ func format_code(code: String) -> String:
 		comment_map[placeholder] = original
 		code = _replace(code, original, placeholder)
 
-	var ref_regex = RegEx.create_from_string(r"\$.*?(?=[.$])")
+	var ref_regex = RegEx.create_from_string(r"\$.*?(?=[.\n]|$)")
 	var ref_matches = ref_regex.search_all(code)
 	var ref_map = {}
 
