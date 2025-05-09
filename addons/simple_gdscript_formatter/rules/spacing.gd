@@ -58,7 +58,10 @@ static func apply(code: String) -> String:
 	var symbols_regex = "(" + ")|(".join(SYMBOLS) + ")"
 	var symbols_operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
 	code = symbols_operator_regex.sub(code, " $1 ", true)
-
+	
+	# "\t* " => "\t*"
+	code = RegEx.create_from_string(r"(\n\t*) *").sub(code, "$1", true)
+	
 	# ": =" => ":="
 	code = RegEx.create_from_string(r": *=").sub(code, ":=", true)
 
@@ -75,7 +78,7 @@ static func apply(code: String) -> String:
 	var keyword_operator_regex = RegEx.create_from_string(r"(?<=[ \)\]])(" + keywoisrd_regex + r")(?=[ \(\[])")
 	code = keyword_operator_regex.sub(code, " $1 ", true)
 
-	#trim
+	# trim end
 	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
 
 	# "    " => " "
@@ -86,6 +89,9 @@ static func apply(code: String) -> String:
 
 	# "( a" => "(a"
 	code = RegEx.create_from_string(r"([{\(\[]) *(" + symbols_regex + ")? *").sub(code, "$1$2", true)
+
+	# unique vale "% a" => "%a"
+	code = RegEx.create_from_string(r"(?<=[\W\D])([ ]?)% (\w)").sub(code, "$1%$2", true)
 
 	# inline {} spacing
 	code = RegEx.create_from_string(r"{ ?(.*)? ?}").sub(code, "{ $1 }", true)

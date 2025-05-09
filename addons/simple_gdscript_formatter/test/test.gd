@@ -1,99 +1,75 @@
 @tool
 
-extends Node
+extends	Node
 
-signal sig
 
-# Enum
-enum State {IDLE,
-	WALKING, RUNNING
-}
-#export range
-@export_range(-90.0, 0.0, 0.1, "range")
-var range: float = -PI / 2
-# Export
-@export var example_var := 1
+@warning_ignore("assert_always_false")
+class		WeirdlyFormattedClass:
+	pass
 
 # one line
-var my_dictionary = { key = "value" }
-# Multiline string
-var weird_multiline_str := """ 
-abcde \"\"\"""more
-text
-"""
-
-var weird_colon := 42
-
-
-# Static
-static func do_static_thing() -> void:
-	pass
-
-
-func _init() -> void:
-	pass
-
+var my_dictionary = {key = "value"}
 
 # Test ops: ** << >> == != >= <= && || += -= *= /= %= **= &= ^= |= ~= <<= >>= := -> & | ^ - + / * > < %
-func run_all_ops(val1: int, val2: float = 1.0):
-	var a = 10
-	var b = 5
-	var result = 0
+func	run_all_ops(	val1	:int,val2:float	=1.0	):
+	var	a=10
+	var		b =5
+	var	result =0
 #top level comment in func
-	var arr = [1, 2, 3]
-	if arr[0] != arr[3] and a > -1:
-		a = (a + b) / (b - a)
-		a = (a + b) / (b - a)
-		a = -90
+	var	arr=[1 , 2 ,	3]
+	if arr[0]	!=	arr[3]	and a > -1:
+		a=(a+b)/(b-a)
+		a=(a	+ b)/(b-a)
+		a	=	-90
 
 	# Arithmetic
-	result = a + b
-	result = a - b
-	result = a * b
-	result = a / b
-	result = a % b
-	result = a ** b
+	result = a+b
+	result=a-b
+	result=a*b
+	result=a /b
+	result=a	% b
+	result=a	**b
 
 	# Bitwise
-	result = a & b
-	result = a | b
-	result = a ^ b
-	result = ~a
-	result = a << b
-	result = a >> b
+	result=a&b
+	result =a|b
+	result=a^	b
+	result=~a
+	result= a<<b
+	result=a>>b
 
 	# Comparison
-	var eq = a == b
-	var neq = a != b
-	var gt = a > b
-	var lt = a < b
-	var gte = a >= b
-	var lte = a <= b
+	var eq=a==b
+	var neq = a!=b
+	var gt=a>b
+	var lt = a< b
+	var gte = a>=b
+	var lte= a <=b
 
 	# Logical
-	var anded = a > 0 && b > 0
-	var ored = a > 0 || b < 0
+	var anded = a > 0 && b >0
+	var ored = a>0 || b<0
 
 	# Assignment
-	a += b
-	a -= b
-	a *= b
-	a /= b
-	a %= b
-	a **= b
-	a &= b
-	a |= b
-	a ^= b
-	a <<= b
-	a >>= b
+	a+=b
+	a	-= b
+	a *=b
+	a/= b
+	a%=b
+	a**=b
+	a&=b
+	a |=b
+	a^= b
+	a<<=b
+	a>>= b
 
 	# Dictionary
 	var d := {
-		"hello": "world"
+		"hello"	:"world"
 	}
 
 	# func-as-var
-	var cb := func() -> void:
+	var cb := func ()->void:
 		print("callback")
 
 	# Instancing
@@ -102,40 +78,69 @@ func run_all_ops(val1: int, val2: float = 1.0):
 	# Signal
 	sig.emit()
 
+signal sig
+
+
+func _init()	->	void:
+	pass
+#export range
+@export_range(- 90.0, 0.0, 0.1, "range")
+var range: float = -PI / 2
+# Multiline string
+var	weird_multiline_str:=""" 
+abcde \"\"\"""more
+text
+"""
+
+# Export
+@export var example_var	:=	1
+
+# Static
+static func	do_static_thing(	)->void:
+	pass
 
 # Return
-func get_it() -> int:
-	return 123
+func	get_it()->int:
+	return	123
 
+# Enum
+enum State	{ IDLE,
+		WALKING, RUNNING 
+}
 
 # Match, loops, await, nested func
 func test_misc():
 	var val := 3
 	# if-nesting
 	if (
-			1 > 0 and
-			2 == 2 and
-			(3 != 4 and 5 < 6)
+		1>0 and
+		2==2 and
+		(3!=4 and 5<6)
 	):
 		pass
 	match val:
 		1:
 			print("one")
-		2, 3:
+		2,3:
 			print("two or three")
 		_:
 			print("default")
 
-	for i in range(0, 5):
-		print(i)
+	for i in range(0,	5):
+		print( i )
 
-	while val > 0:
-		val -= 1
-		if val == 2: continue
-		if val == 0:
+	while val>0:
+		val-=1
+		if val==2: continue
+		if val==0:
 			break
 
 	await get_tree().create_timer(0.1).timeout
+
+	sig.connect(func() -> void:
+		if true:
+			print("inline")
+	)
 
 	sig.connect(func() -> void:
 			if true:
@@ -154,6 +159,14 @@ func test_misc():
 					print("two or three")
 				_:
 					print("default")
+			#unique value
+			match val:
+				1:
+					%abc.enbale=true
+				2, 3:
+					1 - %abc.num
+				_:
+					1 % -%abc.num
 	)
 
 	# if-nesting
@@ -164,8 +177,4 @@ func test_misc():
 	):
 		pass
 
-
-@warning_ignore("assert_always_false")
-class WeirdlyFormattedClass:
-	pass
-@onready var v_box_container_3: VBoxContainer = $VBoxContainer/VBoxContainer3
+var weird_colon := 42

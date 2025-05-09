@@ -3,6 +3,7 @@
 extends Node
 
 signal sig
+
 # Enum
 enum State {IDLE,
 	WALKING, RUNNING
@@ -22,7 +23,6 @@ text
 """
 
 var weird_colon := 42
-@onready var v_box_container_3: VBoxContainer = $VBoxContainer/VBoxContainer3
 
 
 # Static
@@ -51,7 +51,7 @@ func run_all_ops(val1: int, val2: float = 1.0):
 	result = a - b
 	result = a * b
 	result = a / b
-	result = a % b
+	result = a %b
 	result = a ** b
 
 	# Bitwise
@@ -140,6 +140,11 @@ func test_misc():
 	sig.connect(func() -> void:
 			if true:
 				print("inline")
+	)
+
+	sig.connect(func() -> void:
+			if true:
+				print("inline")
 			# if-nesting
 			if (
 				1 > 0 and
@@ -154,6 +159,14 @@ func test_misc():
 					print("two or three")
 				_:
 					print("default")
+			#unique value
+			match val:
+				1:
+					%abc.enbale = true
+				2, 3:
+					1 - %abc.num
+				_:
+					1 % -%abc.num
 	)
 
 	# if-nesting
