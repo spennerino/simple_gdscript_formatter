@@ -128,7 +128,6 @@ static func _handle_indent(code: String, left: String, right: String) -> String:
 					var indent_level = 1
 					if lambada_part.search(lines[0]):
 						indent_level = 2
-					prints(lines[0],lambada_part.search(lines[0]))
 					var formatted := format_block(lines, base_indent, indent_level, right)
 					code = reg.sub(code, formatted)
 		i += 1
