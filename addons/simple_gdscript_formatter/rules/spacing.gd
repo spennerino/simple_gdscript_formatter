@@ -55,13 +55,16 @@ static func apply(code: String) -> String:
 	# strip inline tabs
 	code = RegEx.create_from_string(r"(\S ?)\t+").sub(code, "$1 ", true)
 
+	# strip left space
+	code = RegEx.create_from_string(r"(\n\t*) *").sub(code, "$1", true)
+
 	var symbols_regex = "(" + ")|(".join(SYMBOLS) + ")"
 	var symbols_operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
 	code = symbols_operator_regex.sub(code, " $1 ", true)
-	
+
 	# "\t* " => "\t*"
 	code = RegEx.create_from_string(r"(\n\t*) *").sub(code, "$1", true)
-	
+
 	# ": =" => ":="
 	code = RegEx.create_from_string(r": *=").sub(code, ":=", true)
 
@@ -72,14 +75,11 @@ static func apply(code: String) -> String:
 	code = RegEx.create_from_string(r"(\s)(if|elif)\(").sub(code, r"$1$2 (", true)
 
 	# "a )" => "a)"
-	code = RegEx.create_from_string(r" *([\)\}])").sub(code, "$1", true)
+	code = RegEx.create_from_string(r" *([\)\}\]])").sub(code, "$1", true)
 
 	var keywoisrd_regex = r"|".join(KEYWORDS)
 	var keyword_operator_regex = RegEx.create_from_string(r"(?<=[ \)\]])(" + keywoisrd_regex + r")(?=[ \(\[])")
 	code = keyword_operator_regex.sub(code, " $1 ", true)
-
-	# trim end
-	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
 
 	# "    " => " "
 	code = RegEx.create_from_string(" +").sub(code, " ", true)
@@ -92,13 +92,19 @@ static func apply(code: String) -> String:
 
 	# unique vale "% a" => "%a"
 	code = RegEx.create_from_string(r"(?<=[\W\D])([ ]?)% (\w)").sub(code, "$1%$2", true)
-
+	var a = [1, 2, 3]
 	# inline {} spacing
 	code = RegEx.create_from_string(r"{ ?(.*)? ?}").sub(code, "{ $1 }", true)
 
+	# trim end
+	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
+	
 	code = _handle_indent(code, 1, "[", "]")
 	code = _handle_indent(code, 1, "{", "}")
 	code = _handle_indent(code, 2, "(", ")")
+
+	# trim end one more time
+	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
 
 	return code
 

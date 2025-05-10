@@ -5,9 +5,13 @@ extends Node
 signal sig
 
 # Enum
-enum State {IDLE,
-	WALKING, RUNNING
+enum State {
+	IDLE,
+	WALKING,
+	RUNNING,
 }
+# Enum
+enum State2 { IDLE }
 #export range
 @export_range(-90.0, 0.0, 0.1, "range")
 var range: float = -PI / 2
@@ -113,9 +117,9 @@ func test_misc():
 	var val := 3
 	# if-nesting
 	if (
-			1 > 0 and
-			2 == 2 and
-			(3 != 4 and 5 < 6)
+			1 > 0
+			and 2 == 2
+			and(3 != 4 and 5 < 6)
 	):
 		pass
 	match val:
@@ -147,9 +151,9 @@ func test_misc():
 				print("inline")
 			# if-nesting
 			if (
-				1 > 0 and
-				2 == 2 and
-				(3 != 4 and 5 < 6)
+				1 > 0
+				and 2 == 2
+				and(3 != 4 and 5 < 6)
 			):
 				pass
 			match val:
@@ -171,9 +175,9 @@ func test_misc():
 
 	# if-nesting
 	if (
-			1 > 0 and
-			2 == 2 and
-			(3 != 4 and 5 < 6)
+			1 > 0
+			and 2 == 2
+			and(3 != 4 and 5 < 6)
 	):
 		pass
 

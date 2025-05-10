@@ -21,7 +21,7 @@ static func _ensure_blank_lines_before_declarations(code: String) -> String:
 		if declaration_regex.search(line):
 			if result_lines.size() > 0:
 				var i := result_lines.size() - 1
-				while comment_or_warning_regex.search(result_lines[i]):
+				while comment_or_warning_regex.search(result_lines[i]) and i > -1:
 					i -= 1
 				result_lines.insert(i + 1, "")
 				result_lines.insert(i + 1, "")

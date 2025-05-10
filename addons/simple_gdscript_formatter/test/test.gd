@@ -107,6 +107,11 @@ func	get_it()->int:
 enum State	{ IDLE,
 		WALKING, RUNNING 
 }
+# Enum
+enum State2
+{ IDLE
+		
+}
 
 # Match, loops, await, nested func
 func test_misc():
@@ -170,8 +175,7 @@ func test_misc():
 	)
 
 	# if-nesting
-	if (
-			1 > 0 and
+	if(1 > 0 and
 			2 == 2 and
 			(3 != 4 and 5 < 6)
 	):
