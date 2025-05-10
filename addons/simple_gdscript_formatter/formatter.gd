@@ -6,12 +6,13 @@ const BlankLines = preload("rules/blank_lines.gd")
 
 static func _apply_rules(code: String) -> String:
 	code = Spacing.apply(code)
+
 	code = SyntaxStyle.apply(code)
-	
-	#one more time
 	code = Spacing.apply(code)
 	
 	code = CodeOrder.apply(code)
+	code = Spacing.apply(code)
+
 	code = BlankLines.apply(code)
 	return code
 

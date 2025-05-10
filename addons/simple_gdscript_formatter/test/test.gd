@@ -143,11 +143,14 @@ func test_misc():
 	await get_tree().create_timer(0.1).timeout
 
 	sig.connect(func() -> void:
-		if true:
-			print("inline")
-	)
-
-	sig.connect(func() -> void:
+			sig.connect(func() -> void:
+				if (
+					1 > 0 and
+					2 == 2 and
+					(3 != 4 and 5 < 6)
+				):
+					pass
+			)
 			if true:
 				print("inline")
 			# if-nesting
@@ -169,9 +172,9 @@ func test_misc():
 				1:
 					%abc.enbale=true
 				2, 3:
-					1 - %abc.num
+					1-%abc.num
 				_:
-					1 % -%abc.num
+					1%3+1
 	)
 
 	# if-nesting

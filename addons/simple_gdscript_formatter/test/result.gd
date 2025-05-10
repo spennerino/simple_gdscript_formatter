@@ -55,7 +55,7 @@ func run_all_ops(val1: int, val2: float = 1.0):
 	result = a - b
 	result = a * b
 	result = a / b
-	result = a %b
+	result = a % b
 	result = a ** b
 
 	# Bitwise
@@ -119,7 +119,7 @@ func test_misc():
 	if (
 			1 > 0
 			and 2 == 2
-			and(3 != 4 and 5 < 6)
+			and (3 != 4 and 5 < 6)
 	):
 		pass
 	match val:
@@ -142,18 +142,21 @@ func test_misc():
 	await get_tree().create_timer(0.1).timeout
 
 	sig.connect(func() -> void:
-			if true:
-				print("inline")
-	)
-
-	sig.connect(func() -> void:
+			sig.connect(func() -> void:
+					if (
+							1 > 0
+							and 2 == 2
+							and (3 != 4 and 5 < 6)
+					):
+						pass
+			)
 			if true:
 				print("inline")
 			# if-nesting
 			if (
-				1 > 0
-				and 2 == 2
-				and(3 != 4 and 5 < 6)
+					1 > 0
+					and 2 == 2
+					and (3 != 4 and 5 < 6)
 			):
 				pass
 			match val:
@@ -170,14 +173,14 @@ func test_misc():
 				2, 3:
 					1 - %abc.num
 				_:
-					1 % -%abc.num
+					1 % 3 + 1
 	)
 
 	# if-nesting
 	if (
 			1 > 0
 			and 2 == 2
-			and(3 != 4 and 5 < 6)
+			and (3 != 4 and 5 < 6)
 	):
 		pass
 

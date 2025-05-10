@@ -1,12 +1,3 @@
-# Enum
-# Enum
-enum State {
-	IDLE,
-	WALKING,
-	RUNNING,
-}
-
-
 static func apply(code: String) -> String:
 	# and or first
 	code = RegEx.create_from_string(r" (and|or)\n(\s*)").sub(code, "\n$2$1 ", true)

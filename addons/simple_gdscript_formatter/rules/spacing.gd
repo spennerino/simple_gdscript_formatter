@@ -32,7 +32,6 @@ const SYMBOLS = [
 	">",
 	"<",
 	"-",
-	"%",
 	"=",
 	":",
 	",",
@@ -62,6 +61,9 @@ static func apply(code: String) -> String:
 	var symbols_operator_regex = RegEx.create_from_string(" *?(" + symbols_regex + ") *")
 	code = symbols_operator_regex.sub(code, " $1 ", true)
 
+	# %
+	code = RegEx.create_from_string(r" *?%([^a-zA-Z=])").sub(code, " % $1", true)
+
 	# "\t* " => "\t*"
 	code = RegEx.create_from_string(r"(\n\t*) *").sub(code, "$1", true)
 
@@ -78,8 +80,11 @@ static func apply(code: String) -> String:
 	code = RegEx.create_from_string(r" *([\)\}\]])").sub(code, "$1", true)
 
 	var keywoisrd_regex = r"|".join(KEYWORDS)
-	var keyword_operator_regex = RegEx.create_from_string(r"(?<=[ \)\]])(" + keywoisrd_regex + r")(?=[ \(\[])")
+	var keyword_operator_regex = RegEx.create_from_string(r"(?<=[ \)\]\t])(" + keywoisrd_regex + r")(?=[ \(\[])")
 	code = keyword_operator_regex.sub(code, " $1 ", true)
+
+	# strip left space
+	code = RegEx.create_from_string(r"(\n\t*) *").sub(code, "$1", true)
 
 	# "    " => " "
 	code = RegEx.create_from_string(" +").sub(code, " ", true)
@@ -90,18 +95,15 @@ static func apply(code: String) -> String:
 	# "( a" => "(a"
 	code = RegEx.create_from_string(r"([{\(\[]) *(" + symbols_regex + ")? *").sub(code, "$1$2", true)
 
-	# unique vale "% a" => "%a"
-	code = RegEx.create_from_string(r"(?<=[\W\D])([ ]?)% (\w)").sub(code, "$1%$2", true)
-	var a = [1, 2, 3]
 	# inline {} spacing
 	code = RegEx.create_from_string(r"{ ?(.*)? ?}").sub(code, "{ $1 }", true)
 
 	# trim end
 	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
-	
-	code = _handle_indent(code, 1, "[", "]")
-	code = _handle_indent(code, 1, "{", "}")
-	code = _handle_indent(code, 2, "(", ")")
+
+	code = _handle_indent(code, "[", "]")
+	code = _handle_indent(code, "{", "}")
+	code = _handle_indent(code, "(", ")")
 
 	# trim end one more time
 	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
@@ -109,10 +111,10 @@ static func apply(code: String) -> String:
 	return code
 
 
-static func _handle_indent(code: String, indent_level: int, left: String, right: String) -> String:
+static func _handle_indent(code: String, left: String, right: String) -> String:
 	var i = 1
 	var parts := find_outer_parentheses(code, i, left, right)
-
+	var lambada_part = RegEx.create_from_string(r"\(func\(")
 	while parts.size() > 0:
 		for part in parts:
 			var escaped := regex_escape(part)
@@ -123,6 +125,10 @@ static func _handle_indent(code: String, indent_level: int, left: String, right:
 				var lines := block.split("\n")
 				if lines.size() > 1:
 					var base_indent := get_indent_level(lines[0])
+					var indent_level = 1
+					if lambada_part.search(lines[0]):
+						indent_level = 2
+					prints(lines[0],lambada_part.search(lines[0]))
 					var formatted := format_block(lines, base_indent, indent_level, right)
 					code = reg.sub(code, formatted)
 		i += 1
@@ -136,9 +142,8 @@ static func format_block(lines: Array[String], base_indent: int, indent_level: i
 	var block_indent_stack := []
 	var match_indent_stack = []
 	var if_indent_stack = []
-	var fix_indent = 0
 
-	for i in range(lines.size()):
+	for i in lines.size():
 		var line_indent = get_indent_level(lines[i])
 		var line := lines[i].lstrip("\t")
 
@@ -151,18 +156,14 @@ static func format_block(lines: Array[String], base_indent: int, indent_level: i
 		while if_indent_stack.size() > 0 and line_indent <= if_indent_stack[-1] and not line.begins_with("):"):
 			if_indent_stack.pop_back()
 
-		if if_indent_stack.size() > 0 and line.ends_with("):"):
-			fix_indent -= 1
-
 		if i == 0:
 			result.append(lines[i])
 		elif i == lines.size() - 1 and line.begins_with(right):
 			result.append("\t".repeat(base_indent) + line)
 		else:
-			result.append("\t".repeat(indent_level + block_indent_stack.size() + if_indent_stack.size() + match_indent_stack.size() - fix_indent) + line)
+			result.append("\t".repeat(indent_level + block_indent_stack.size() + if_indent_stack.size() + match_indent_stack.size()) + line)
 		if RegEx.create_from_string(r"^(if|elif) \(").search(line):
 			if_indent_stack.push_back(line_indent)
-			fix_indent += 1
 		if RegEx.create_from_string(r"^(if (?!\()|elif (?!\()|else|for)").search(line):
 			block_indent_stack.push_back(line_indent)
 		if match_indent_stack.size() > 0 and RegEx.create_from_string(":$").search(line):
