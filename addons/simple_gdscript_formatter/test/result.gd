@@ -10,6 +10,10 @@ enum State {
 	WALKING,
 	RUNNING,
 }
+
+#func disable():
+	#pass
+
 # Enum
 enum State2 { IDLE }
 #export range
@@ -181,6 +185,14 @@ func test_misc():
 			1 > 0
 			and 2 == 2
 			and (3 != 4 and 5 < 6)
+	):
+		pass
+
+
+func block():
+	while(
+			true
+			and false
 	):
 		pass
 

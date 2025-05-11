@@ -75,7 +75,7 @@ func _open_external() -> void:
 					col += tabs.get_string().length() * 3
 			var arguments: Array[String] = []
 			for flag in exec_flags.split(" "):
-				arguments.append(flag.format({"project": project, "col": col, "line": line + 1, "file": file}))
+				arguments.append(flag.format({ "project": project, "col": col, "line": line + 1, "file": file }))
 			OS.execute_with_pipe(exec_path, arguments, false)
 
 

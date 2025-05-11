@@ -6,8 +6,7 @@ static func apply(code: String) -> String:
 
 	var trim_triple_newlines := RegEx.create_from_string("\n{3,}")
 	code = trim_triple_newlines.sub(code, "\n\n\n", true)
-	if code.length() > 0 and not code.ends_with("\n\n"):
-		code += "\n"
+
 	return code
 
 

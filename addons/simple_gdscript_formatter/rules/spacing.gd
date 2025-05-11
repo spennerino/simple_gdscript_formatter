@@ -98,12 +98,25 @@ static func apply(code: String) -> String:
 	# inline {} spacing
 	code = RegEx.create_from_string(r"{ ?(.*)? ?}").sub(code, "{ $1 }", true)
 
+	# trim empty {}
+	code = RegEx.create_from_string(r"{ +}").sub(code, "{}", true)
+
 	# trim end
 	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
 
+	# fix indent
 	code = _handle_indent(code, "[", "]")
 	code = _handle_indent(code, "{", "}")
 	code = _handle_indent(code, "(", ")")
+
+	code = _trim_indent(code)
+
+	# apply again
+	code = _handle_indent(code, "[", "]")
+	code = _handle_indent(code, "{", "}")
+	code = _handle_indent(code, "(", ")")
+
+	code = _align_comment(code)
 
 	# trim end one more time
 	code = RegEx.create_from_string("[ \t]*\n").sub(code, "\n", true)
@@ -145,17 +158,18 @@ static func format_block(lines: Array[String], base_indent: int, indent_level: i
 	for i in lines.size():
 		var line_indent = get_indent_level(lines[i])
 		var line := lines[i].lstrip("\t")
+		var is_comment_line := RegEx.create_from_string("^__COMMENT__").search(line)
+		if not is_comment_line:
+			while block_indent_stack.size() > 0 and line_indent <= block_indent_stack[-1]:
+				block_indent_stack.pop_back()
 
-		while block_indent_stack.size() > 0 and line_indent <= block_indent_stack[-1]:
-			block_indent_stack.pop_back()
+			while match_indent_stack.size() > 0 and line_indent <= match_indent_stack[-1]:
+				match_indent_stack.pop_back()
 
-		while match_indent_stack.size() > 0 and line_indent <= match_indent_stack[-1]:
-			match_indent_stack.pop_back()
+			while if_indent_stack.size() > 0 and line_indent <= if_indent_stack[-1] and not line.begins_with("):"):
+				if_indent_stack.pop_back()
 
-		while if_indent_stack.size() > 0 and line_indent <= if_indent_stack[-1] and not line.begins_with("):"):
-			if_indent_stack.pop_back()
-
-		if i == 0:
+		if i == 0 or is_comment_line:
 			result.append(lines[i])
 		elif i == lines.size() - 1 and line.begins_with(right):
 			result.append("\t".repeat(base_indent) + line)
@@ -163,7 +177,7 @@ static func format_block(lines: Array[String], base_indent: int, indent_level: i
 			result.append("\t".repeat(indent_level + block_indent_stack.size() + if_indent_stack.size() + match_indent_stack.size()) + line)
 		if RegEx.create_from_string(r"^(if|elif) \(").search(line):
 			if_indent_stack.push_back(line_indent)
-		if RegEx.create_from_string(r"^(if (?!\()|elif (?!\()|else|for)").search(line):
+		if RegEx.create_from_string(r"^(if (?!\()|elif (?!\()|else|for|while)").search(line):
 			block_indent_stack.push_back(line_indent)
 		if match_indent_stack.size() > 0 and RegEx.create_from_string(":$").search(line):
 			block_indent_stack.push_back(line_indent)
@@ -203,3 +217,47 @@ static func find_outer_parentheses(text: String, target_level: int, left: String
 				result.append(text.substr(start, i - start + 1))
 			depth -= 1
 	return result
+
+
+static func _trim_indent(code: String) -> String:
+	var result := []
+	var lines := code.split("\n")
+
+	var block_indent_stack := []
+	var last_indent := 0
+	for i in lines.size():
+		var line_indent = get_indent_level(lines[i])
+		var line := lines[i].lstrip("\t")
+		var is_comment_line := RegEx.create_from_string(r"^__COMMENT__").search(line)
+		if not is_comment_line and not line.is_empty():
+			while block_indent_stack.size() > 0 and line_indent <= block_indent_stack[-1]:
+				block_indent_stack.pop_back()
+		if is_comment_line:
+			result.push_back(lines[i])
+			continue
+		elif line_indent > last_indent:
+			block_indent_stack.push_back(last_indent)
+		result.push_back("\t".repeat(block_indent_stack.size()) + line)
+		if not is_comment_line and not line.is_empty():
+			last_indent = line_indent
+	return "\n".join(result)
+
+
+static func _align_comment(code: String) -> String:
+	var result := []
+	var lines := code.split("\n")
+	for i in range(lines.size() - 1, -1, -1):
+		var line_indent = get_indent_level(lines[i])
+		var line := lines[i].lstrip("\t")
+
+		if (
+				i == lines.size() - 1
+				or RegEx.create_from_string(r"^__COMMENT__CODE").search(line)
+		):
+			result.push_front(lines[i])
+		elif RegEx.create_from_string(r"^__COMMENT__").search(line):
+			result.push_front("\t".repeat(get_indent_level(result[0])) + line)
+		else:
+			result.push_front(lines[i])
+
+	return "\n".join(result)

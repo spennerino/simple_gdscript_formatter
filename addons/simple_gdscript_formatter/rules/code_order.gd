@@ -1,4 +1,5 @@
 static func apply(code: String) -> String:
+	var origin_code = code
 	var categorized_blocks := {
 		"tool": [], # @tool, @icon, @static_unload
 		"class_name": [], # class_name
@@ -44,7 +45,7 @@ static func apply(code: String) -> String:
 	code = extract_and_categorize(r"func _", "virtual_others", categorized_blocks, code)
 	code = extract_and_categorize(r"func ", "methods", categorized_blocks, code)
 	code = extract_and_categorize(r"class", "subclasses", categorized_blocks, code)
-	assert(code.strip_edges() == "", "Unprocessed code:" + code)
+	assert(code.strip_edges() == "", "Unprocessed code:" + code + "\n Origin code:" + origin_code)
 	var result := ""
 	for key in categorized_blocks:
 		for block: String in categorized_blocks.get(key):

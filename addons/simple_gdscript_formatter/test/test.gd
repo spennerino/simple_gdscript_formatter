@@ -112,7 +112,8 @@ enum State2
 { IDLE
 		
 }
-
+#func disable():
+	#pass
 # Match, loops, await, nested func
 func test_misc():
 	var val := 3
@@ -183,5 +184,12 @@ func test_misc():
 			(3 != 4 and 5 < 6)
 	):
 		pass
+
+func block():
+			while (
+					true
+					and false
+			):
+				pass
 
 var weird_colon := 42
