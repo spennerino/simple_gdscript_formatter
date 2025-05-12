@@ -36,7 +36,8 @@ func	run_all_ops(	val1	:int,val2:float	=1.0	):
 		a=(a+b)/(b-a)
 		a=(a	+ b)/(b-a)
 		a	=	-90
-
+	if(true and false):
+		pass
 	# Arithmetic
 	result = a+b
 	result=a-b

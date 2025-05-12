@@ -2,8 +2,11 @@ static func apply(code: String) -> String:
 	# and or first
 	code = RegEx.create_from_string(r" (and|or)\n(\s*)").sub(code, "\n$2$1 ", true)
 
+	# avoid-unnecessary-parentheses
+	code = RegEx.create_from_string(r"(if|while) \((.*)\):\n").sub(code, "$1 $2:\n", true)
+
 	# if (a => if (\na
-	code = RegEx.create_from_string(r"(\s)if \((.+)").sub(code, "$1if (\n$2", true)
+	code = RegEx.create_from_string(r"(\s)(if|while) \((.+)").sub(code, "$1$2 (\n$3", true)
 
 	# enums with each item on its own line.
 	var enum_regex = RegEx.create_from_string(r"(^|\n|\s)enum (.|\n)*?{(.|\n)*?}")
@@ -31,8 +34,6 @@ static func apply(code: String) -> String:
 
 		code = _replace(code, enum_string, new_string)
 
-	# avoid-unnecessary-parentheses
-	code = RegEx.create_from_string(r"if \((.*)\):").sub(code, "if $1:", true)
 	return code
 
 
