@@ -47,11 +47,15 @@ static func apply(code: String) -> String:
 	code = extract_and_categorize(r"class", "subclasses", categorized_blocks, code)
 	assert(code.strip_edges() == "", "Unprocessed code:" + code + "\n Origin code:" + origin_code)
 	var result := ""
+	var i = 0
 	for key in categorized_blocks:
+		if i > 3:
+			result += "\n"
 		for block: String in categorized_blocks.get(key):
 			if not block.begins_with("\n") and result.length() > 0:
 				result += "\n"
 			result += block
+		i += 1
 	return result
 
 

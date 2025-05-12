@@ -10,12 +10,9 @@ enum State {
 	WALKING,
 	RUNNING,
 }
-
-#func disable():
-	#pass
-
 # Enum
 enum State2 { IDLE }
+
 #export range
 @export_range(-90.0, 0.0, 0.1, "range")
 var range: float = -PI / 2
@@ -116,6 +113,8 @@ func get_it() -> int:
 	return 123
 
 
+#func disable():
+	#pass
 # Match, loops, await, nested func
 func test_misc():
 	var val := 3
@@ -199,4 +198,18 @@ func block():
 
 @warning_ignore("assert_always_false")
 class WeirdlyFormattedClass:
-	pass
+	var a = 1
+
+	func block():
+		while(
+				true
+				and false
+		):
+			pass
+
+	func block2():
+		while(
+				true
+				and false
+		):
+			pass

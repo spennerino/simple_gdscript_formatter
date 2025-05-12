@@ -7,6 +7,9 @@ static func apply(code: String) -> String:
 	var trim_triple_newlines := RegEx.create_from_string("\n{3,}")
 	code = trim_triple_newlines.sub(code, "\n\n\n", true)
 
+	var offset = code.find("\nclass ")
+	if offset > -1:
+		code = trim_double_newlines.sub(code, "\n\n", true, offset)
 	return code
 
 

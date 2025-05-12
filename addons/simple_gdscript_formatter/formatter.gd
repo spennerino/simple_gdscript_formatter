@@ -72,7 +72,6 @@ func format_code(code: String) -> String:
 	var breaker_regex = RegEx.create_from_string(r"\\\n\s*")
 	var breaker_matches = breaker_regex.search_all(code)
 	var breaker_map = {}
-
 	for i in range(breaker_matches.size()):
 		var match = breaker_matches[i]
 		var original = match.get_string()

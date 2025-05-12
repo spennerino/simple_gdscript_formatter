@@ -4,8 +4,23 @@ extends	Node
 
 
 @warning_ignore("assert_always_false")
-class		WeirdlyFormattedClass:
-	pass
+class WeirdlyFormattedClass:
+	var a =1
+	func block():
+		while(
+				true
+				and false
+		):
+			pass
+
+
+
+	func block2():
+		while(
+				true
+				and false
+		):
+			pass
 
 # one line
 var my_dictionary = {key = "value"}

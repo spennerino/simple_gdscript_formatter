@@ -5,7 +5,7 @@ static func apply(code: String) -> String:
 	# if (a => if (\na
 	code = RegEx.create_from_string(r"(\s)if \((.+)").sub(code, "$1if (\n$2", true)
 
-	# enums with each item on its own line. (?<=(^|\s*)enum .*?{)((.|\n)*?)(?=\})
+	# enums with each item on its own line.
 	var enum_regex = RegEx.create_from_string(r"(^|\n|\s)enum (.|\n)*?{(.|\n)*?}")
 	var founds := enum_regex.search_all(code)
 	for found in founds:
