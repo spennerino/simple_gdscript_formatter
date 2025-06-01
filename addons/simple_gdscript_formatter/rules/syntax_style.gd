@@ -23,17 +23,15 @@ static func apply(code: String) -> String:
 			for item in items:
 				var prefix = ""
 				var suffix = ""
-				if not item.contains(","):
+				if not item.ends_with("}"):
 					suffix += ","
 				if not item.begins_with("\n"):
 					prefix += "\n"
 				new_string += prefix + item + suffix
 			new_string = RegEx.create_from_string(r"(\n )*{\n*").sub(new_string, " {\n")
-			new_string = RegEx.create_from_string(r"\n*}").sub(new_string, "\n}")
-			new_string = RegEx.create_from_string(r"(\w),?(\n+}),?").sub(new_string, "$1,$2")
-
+			new_string = RegEx.create_from_string(r"\s*}").sub(new_string, "\n}")
+			new_string = RegEx.create_from_string(r"(\w),?(\n+})").sub(new_string, "$1,$2")
 		code = _replace(code, enum_string, new_string)
-
 	return code
 
 

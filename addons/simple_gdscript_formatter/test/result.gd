@@ -12,6 +12,13 @@ enum State {
 }
 # Enum
 enum State2 { IDLE }
+enum SIDE {
+	TOP,
+	LEFT,
+	BOTTOM,
+	RIGHT,
+	ANY,
+}
 
 #export range
 @export_range(-90.0, 0.0, 0.1, "range")

@@ -209,3 +209,4 @@ func block():
 				pass
 
 var weird_colon := 42
+enum SIDE {TOP, LEFT, BOTTOM, RIGHT, ANY} 
