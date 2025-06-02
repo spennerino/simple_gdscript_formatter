@@ -1,6 +1,6 @@
 static func apply(code: String) -> String:
 	var origin_code = code
-	var categorized_blocks := {
+	var categorized_blocks: Dictionary[String, Array] = {
 		"tool": [], # @tool
 		"icon": [], # @icon
 		"static_unload": [], # @static_unload
@@ -10,10 +10,15 @@ static func apply(code: String) -> String:
 		"signals": [],
 		"enums": [],
 		"constants": [],
+		"pirvate_constants": [],
 		"static_vars": [],
+		"private_static_vars": [],
 		"export_vars": [],
+		"private_export_vars": [],
 		"vars": [],
+		"private_vars": [],
 		"onready_vars": [],
+		"private_onready_vars": [],
 		"_static_init": [], # func _static_init()
 		"static_methods": [], # other static methods
 		"virtual__init": [], # func _init()
@@ -24,6 +29,7 @@ static func apply(code: String) -> String:
 		"virtual_others": [], # other virtual methods (starting with "_")
 		"custom_overridden": [], # func _custom()
 		"methods": [], # remaining methods
+		"private_methods": [], # remaining methods
 		"subclasses": [], # class Foo, or class Bar extends ...,
 	}
 
@@ -34,10 +40,15 @@ static func apply(code: String) -> String:
 	code = extract_and_categorize(r"extends.*", "extends", categorized_blocks, code)
 	code = extract_and_categorize(r"signal.*", "signals", categorized_blocks, code)
 	code = extract_and_categorize(r"enum", "enums", categorized_blocks, code)
+	code = extract_and_categorize(r"const _", "private_constants", categorized_blocks, code)
 	code = extract_and_categorize(r"const", "constants", categorized_blocks, code)
+	code = extract_and_categorize(r"static var _", "private_static_vars", categorized_blocks, code)
 	code = extract_and_categorize(r"static var", "static_vars", categorized_blocks, code)
+	code = extract_and_categorize(r"@export(?:(?!var)[\S\s])*?var _", "private_export_vars", categorized_blocks, code, true)
 	code = extract_and_categorize(r"@export[\S\s]*?var", "export_vars", categorized_blocks, code, true)
-	code = extract_and_categorize(r"@onready[\S\s]*?var", "onready_vars", categorized_blocks, code, true)
+	code = extract_and_categorize(r"@onready[\S\s]*?var _", "private_onready_vars", categorized_blocks, code, true)
+	code = extract_and_categorize(r"@onready(?:(?!var)[\S\s])*?var", "onready_vars", categorized_blocks, code, true)
+	code = extract_and_categorize(r"var _", "private_vars", categorized_blocks, code)
 	code = extract_and_categorize(r"var", "vars", categorized_blocks, code)
 	code = extract_and_categorize(r"func _static_init", "_static_init", categorized_blocks, code)
 	code = extract_and_categorize(r"static func", "static_methods", categorized_blocks, code)
@@ -46,7 +57,8 @@ static func apply(code: String) -> String:
 	code = extract_and_categorize(r"func _ready", "virtual__ready", categorized_blocks, code)
 	code = extract_and_categorize(r"func _process", "virtual__process", categorized_blocks, code)
 	code = extract_and_categorize(r"func _physics_process", "virtual__physics_process", categorized_blocks, code)
-	code = extract_and_categorize(r"func _", "virtual_others", categorized_blocks, code)
+	code = extract_and_categorize(r"func _(input|unhandled)", "virtual_others", categorized_blocks, code)
+	code = extract_and_categorize(r"func _", "private_methods", categorized_blocks, code)
 	code = extract_and_categorize(r"func ", "methods", categorized_blocks, code)
 	code = extract_and_categorize(r"class", "subclasses", categorized_blocks, code)
 	assert(code.strip_edges() == "", "Unprocessed code:" + code + "\n Origin code:" + origin_code)

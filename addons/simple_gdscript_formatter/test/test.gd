@@ -24,7 +24,7 @@ class WeirdlyFormattedClass:
 			pass
 
 # one line
-var my_dictionary = {key = "value"}
+var _my_dictionary = {key = "value"}
 
 # Test ops: ** << >> == != >= <= && || += -= *= /= %= **= &= ^= |= ~= <<= >>= := -> & | ^ - + / * > < %
 func	run_all_ops(	val1	:int,val2:float	=1.0	):
@@ -102,7 +102,7 @@ func _init()	->	void:
 	pass
 #export range
 @export_range(- 90.0, 0.0, 0.1, "range")
-var range: float = -PI / 2
+var _range: float = -PI / 2
 # Multiline string
 var	weird_multiline_str:=""" 
 abcde \"\"\"""more
@@ -211,3 +211,5 @@ func block():
 
 var weird_colon := 42
 enum SIDE {TOP, LEFT, BOTTOM, RIGHT, ANY} 
+@onready var _r2=1
+@onready var r1=2

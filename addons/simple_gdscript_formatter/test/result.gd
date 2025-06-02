@@ -22,14 +22,13 @@ enum SIDE {
 	ANY,
 }
 
-#export range
-@export_range(-90.0, 0.0, 0.1, "range")
-var range: float = -PI / 2
 # Export
 @export var example_var := 1
 
-# one line
-var my_dictionary = { key = "value" }
+#export range
+@export_range(-90.0, 0.0, 0.1, "range")
+var _range: float = -PI / 2
+
 # Multiline string
 var weird_multiline_str := """ 
 abcde \"\"\"""more
@@ -37,6 +36,13 @@ text
 """
 
 var weird_colon := 42
+
+# one line
+var _my_dictionary = { key = "value" }
+
+@onready var r1 = 2
+
+@onready var _r2 = 1
 
 
 # Static
