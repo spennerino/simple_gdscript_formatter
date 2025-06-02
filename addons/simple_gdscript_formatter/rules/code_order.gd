@@ -1,7 +1,9 @@
 static func apply(code: String) -> String:
 	var origin_code = code
 	var categorized_blocks := {
-		"tool": [], # @tool, @icon, @static_unload
+		"tool": [], # @tool
+		"icon": [], # @icon
+		"static_unload": [], # @static_unload
 		"class_name": [], # class_name
 		"extends": [], # extends
 		"doc_comment": [], # ## doc comment
@@ -26,6 +28,8 @@ static func apply(code: String) -> String:
 	}
 
 	code = extract_and_categorize(r"@tool", "tool", categorized_blocks, code, true)
+	code = extract_and_categorize(r"@icon", "icon", categorized_blocks, code, true)
+	code = extract_and_categorize(r"@static_unload", "static_unload", categorized_blocks, code, true)
 	code = extract_and_categorize(r"class_name.*", "class_name", categorized_blocks, code)
 	code = extract_and_categorize(r"extends.*", "extends", categorized_blocks, code)
 	code = extract_and_categorize(r"signal.*", "signals", categorized_blocks, code)

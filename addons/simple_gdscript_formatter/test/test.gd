@@ -1,5 +1,6 @@
 @tool
-
+@static_unload
+@icon("/")
 extends	Node
 
 
