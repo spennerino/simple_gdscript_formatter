@@ -65,8 +65,10 @@ static func apply(code: String) -> String:
 	var result := ""
 	var i = 0
 	for key in categorized_blocks:
-		if i > 3:
+		if i > 5:
 			result += "\n"
+		else:
+			result = result.replace("\n\n", "\n")
 		for block: String in categorized_blocks.get(key):
 			if not block.begins_with("\n") and result.length() > 0:
 				result += "\n"

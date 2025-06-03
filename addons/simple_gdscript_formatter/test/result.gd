@@ -1,7 +1,6 @@
 @tool
 @icon("/")
 @static_unload
-
 extends Node
 
 signal sig
